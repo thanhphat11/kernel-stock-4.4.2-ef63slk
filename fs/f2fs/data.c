@@ -1315,6 +1315,7 @@ static int check_direct_IO(struct inode *inode, int rw,
 		return -EINVAL;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 #ifdef CONFIG_AIO_OPTIMIZATION
 	for (i = 0; i < iter->nr_segs; i++) {
 		const struct iovec *iov = iov_iter_iovec(iter);
@@ -1331,6 +1332,11 @@ static int check_direct_IO(struct inode *inode, int rw,
        for (i = 0; i < nr_segs; i++)
                if (iov[i].iov_len & blocksize_mask)
                        return -EINVAL;
+=======
+	for (i = 0; i < nr_segs; i++)
+		if (iov[i].iov_len & blocksize_mask)
+			return -EINVAL;
+>>>>>>> 6861f22... f2fs: support 3.4
 
 >>>>>>> 2f842f1... fs: add support for f2fs
 	return 0;
@@ -1389,7 +1395,6 @@ static ssize_t f2fs_direct_IO(int rw, struct kiocb *iocb,
 
 	err = blockdev_direct_IO(rw, iocb, inode, iov, offset, nr_segs,
 							get_data_block);
-
 	if (err < 0 && (rw & WRITE))
 		f2fs_write_failed(mapping, offset + count);
 

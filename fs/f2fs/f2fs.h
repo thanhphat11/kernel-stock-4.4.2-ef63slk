@@ -21,11 +21,15 @@
 #include <linux/sched.h>
 
 #ifdef CONFIG_F2FS_CHECK_FS
+<<<<<<< HEAD
 #define f2fs_bug_on(condition)	BUG_ON(condition)
 <<<<<<< HEAD
 #else
 #define f2fs_bug_on(condition)
 =======
+=======
+#define f2fs_bug_on(sbi, condition)	BUG_ON(condition)
+>>>>>>> 6861f22... f2fs: support 3.4
 #define f2fs_down_write(x, y)	down_write(x)
 #else
 #define f2fs_bug_on(condition)	WARN_ON(condition)
