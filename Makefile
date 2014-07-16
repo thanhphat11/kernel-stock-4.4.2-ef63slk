@@ -1,6 +1,6 @@
 VERSION = 3
-PATCHLEVEL = 4
-SUBLEVEL = 0
+PATCHLEVEL = 10
+SUBLEVEL = 109
 EXTRAVERSION =
 NAME = Saber-toothed Squirrel
 
@@ -373,7 +373,7 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -Werror-implicit-function-declaration \
 		   -Wno-format-security \
 		   -fno-delete-null-pointer-checks
-#// 20120105, albatros, imei 주소값의 공용으로 사용을 위해서
+#// 20120105, albatros, imei \C1玲柰\AA\C0\C7 \B0\F8\BF\EB\C0\B8\B7\CE \BB\E7\BF\EB\C0\BB \C0\A7\C7漫\AD
 
 LINUXINCLUDE += -I$(srctree)/include/pantech
 
