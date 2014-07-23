@@ -59,7 +59,11 @@ enum {
 =======
 	Opt_inline_data,
 	Opt_flush_merge,
+<<<<<<< HEAD
 >>>>>>> 2f842f1... fs: add support for f2fs
+=======
+	Opt_nobarrier,
+>>>>>>> 5553fb6... f2fs: add nobarrier mount option
 	Opt_err,
 };
 
@@ -84,7 +88,11 @@ static match_table_t f2fs_tokens = {
 =======
 	{Opt_inline_data, "inline_data"},
 	{Opt_flush_merge, "flush_merge"},
+<<<<<<< HEAD
 >>>>>>> 2f842f1... fs: add support for f2fs
+=======
+	{Opt_nobarrier, "nobarrier"},
+>>>>>>> 5553fb6... f2fs: add nobarrier mount option
 	{Opt_err, NULL},
 };
 
@@ -443,7 +451,13 @@ static int parse_options(struct super_block *sb, char *options)
 		case Opt_flush_merge:
 			set_opt(sbi, FLUSH_MERGE);
 			break;
+<<<<<<< HEAD
 >>>>>>> 2f842f1... fs: add support for f2fs
+=======
+		case Opt_nobarrier:
+			set_opt(sbi, NOBARRIER);
+			break;
+>>>>>>> 5553fb6... f2fs: add nobarrier mount option
 		default:
 			f2fs_msg(sb, KERN_ERR,
 				"Unrecognized mount option \"%s\" or missing value",
@@ -684,7 +698,12 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
 		seq_puts(seq, ",inline_data");
 	if (!f2fs_readonly(sbi->sb) && test_opt(sbi, FLUSH_MERGE))
 		seq_puts(seq, ",flush_merge");
+<<<<<<< HEAD
 >>>>>>> 2f842f1... fs: add support for f2fs
+=======
+	if (test_opt(sbi, NOBARRIER))
+		seq_puts(seq, ",nobarrier");
+>>>>>>> 5553fb6... f2fs: add nobarrier mount option
 	seq_printf(seq, ",active_logs=%u", sbi->active_logs);
 
 	return 0;

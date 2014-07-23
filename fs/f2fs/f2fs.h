@@ -56,7 +56,11 @@
 =======
 #define F2FS_MOUNT_INLINE_DATA		0x00000100
 #define F2FS_MOUNT_FLUSH_MERGE		0x00000200
+<<<<<<< HEAD
 >>>>>>> 2f842f1... fs: add support for f2fs
+=======
+#define F2FS_MOUNT_NOBARRIER		0x00000400
+>>>>>>> 5553fb6... f2fs: add nobarrier mount option
 
 #define clear_opt(sbi, option)	(sbi->mount_opt.opt &= ~F2FS_MOUNT_##option)
 #define set_opt(sbi, option)	(sbi->mount_opt.opt |= F2FS_MOUNT_##option)
