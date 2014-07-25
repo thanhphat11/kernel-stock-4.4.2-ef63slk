@@ -121,9 +121,19 @@ enum {
 	META_SSA
 };
 
+<<<<<<< HEAD
 >>>>>>> 2f842f1... fs: add support for f2fs
 /* for the list of orphan inodes */
 struct orphan_inode_entry {
+=======
+/* for the list of ino */
+enum {
+	ORPHAN_INO,		/* for orphan ino list */
+	MAX_INO_ENTRY,		/* max. list */
+};
+
+struct ino_entry {
+>>>>>>> cb9b858... f2fs: add infra for ino management
 	struct list_head list;	/* list head */
 	nid_t ino;		/* inode number */
 };
@@ -529,9 +539,11 @@ struct f2fs_sb_info {
 >>>>>>> 2f842f1... fs: add support for f2fs
 	wait_queue_head_t cp_wait;
 
-	/* for orphan inode management */
-	struct list_head orphan_inode_list;	/* orphan inode list */
-	spinlock_t orphan_inode_lock;		/* for orphan inode list */
+	/* for inode management */
+	spinlock_t ino_lock[MAX_INO_ENTRY];		/* for ino entry lock */
+	struct list_head ino_list[MAX_INO_ENTRY];	/* inode list head */
+
+	/* for orphan inode, use 0'th array */
 	unsigned int n_orphans;			/* # of orphan inodes */
 	unsigned int max_orphans;		/* max orphan inodes */
 
@@ -1502,7 +1514,7 @@ struct inode *check_dirty_dir_inode(struct f2fs_sb_info *, nid_t);
 >>>>>>> 2f842f1... fs: add support for f2fs
 void sync_dirty_dir_inodes(struct f2fs_sb_info *);
 void write_checkpoint(struct f2fs_sb_info *, bool);
-void init_orphan_info(struct f2fs_sb_info *);
+void init_ino_entry_info(struct f2fs_sb_info *);
 int __init create_checkpoint_caches(void);
 void destroy_checkpoint_caches(void);
 
