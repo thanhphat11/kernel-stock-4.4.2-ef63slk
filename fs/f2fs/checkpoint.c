@@ -340,6 +340,47 @@ const struct address_space_operations f2fs_meta_aops = {
 	.set_page_dirty	= f2fs_set_meta_page_dirty,
 };
 
+static void __add_ino_entry(struct f2fs_sb_info *sbi, nid_t ino)
+{
+	struct list_head *head;
+	struct orphan_inode_entry *new, *e;
+
+	new = f2fs_kmem_cache_alloc(orphan_entry_slab, GFP_ATOMIC);
+	new->ino = ino;
+
+	spin_lock(&sbi->orphan_inode_lock);
+	list_for_each_entry(e, &sbi->orphan_inode_list, list) {
+		if (e->ino == ino) {
+			spin_unlock(&sbi->orphan_inode_lock);
+			kmem_cache_free(orphan_entry_slab, new);
+			return;
+		}
+		if (e->ino > ino)
+			break;
+	}
+
+	/* add new entry into list which is sorted by inode number */
+	list_add_tail(&new->list, &e->list);
+	spin_unlock(&sbi->orphan_inode_lock);
+}
+
+static void __remove_ino_entry(struct f2fs_sb_info *sbi, nid_t ino)
+{
+	struct orphan_inode_entry *e;
+
+	spin_lock(&sbi->orphan_inode_lock);
+	list_for_each_entry(e, &sbi->orphan_inode_list, list) {
+		if (e->ino == ino) {
+			list_del(&e->list);
+			sbi->n_orphans--;
+			spin_unlock(&sbi->orphan_inode_lock);
+			kmem_cache_free(orphan_entry_slab, e);
+			return;
+		}
+	}
+	spin_unlock(&sbi->orphan_inode_lock);
+}
+
 int acquire_orphan_inode(struct f2fs_sb_info *sbi)
 {
 	int err = 0;
@@ -373,6 +414,7 @@ void release_orphan_inode(struct f2fs_sb_info *sbi)
 
 void add_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
 {
+<<<<<<< HEAD
 <<<<<<< HEAD
 	struct list_head *head, *this;
 	struct orphan_inode_entry *new = NULL, *orphan = NULL;
@@ -416,10 +458,15 @@ void add_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
 	list_add_tail(&new->list, &orphan->list);
 >>>>>>> 2f842f1... fs: add support for f2fs
 	spin_unlock(&sbi->orphan_inode_lock);
+=======
+	/* add new orphan entry into list which is sorted by inode number */
+	__add_ino_entry(sbi, ino);
+>>>>>>> da172d0... f2fs: punch the core function for inode management
 }
 
 void remove_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
 {
+<<<<<<< HEAD
 	struct list_head *head;
 	struct orphan_inode_entry *orphan;
 
@@ -448,6 +495,10 @@ void remove_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
 		}
 	}
 	spin_unlock(&sbi->orphan_inode_lock);
+=======
+	/* remove orphan entry from orphan list */
+	__remove_ino_entry(sbi, ino);
+>>>>>>> da172d0... f2fs: punch the core function for inode management
 }
 
 static void recover_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
