@@ -599,7 +599,9 @@ next:
 
 int recover_fsync_data(struct f2fs_sb_info *sbi)
 {
+	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_WARM_NODE);
 	struct list_head inode_list;
+	block_t blkaddr;
 	int err;
 	bool need_writecp = false;
 
@@ -616,6 +618,9 @@ int recover_fsync_data(struct f2fs_sb_info *sbi)
 
 	/* step #1: find fsynced inode numbers */
 	sbi->por_doing = true;
+
+	blkaddr = NEXT_FREE_BLKADDR(sbi, curseg);
+
 	err = find_fsync_dnodes(sbi, &inode_list);
 <<<<<<< HEAD
 	if (err) {
@@ -646,7 +651,14 @@ int recover_fsync_data(struct f2fs_sb_info *sbi)
 out:
 	destroy_fsync_dnodes(&inode_list);
 	kmem_cache_destroy(fsync_entry_slab);
+
+	if (err) {
+		truncate_inode_pages_final(NODE_MAPPING(sbi));
+		truncate_inode_pages_final(META_MAPPING(sbi));
+	}
+
 	sbi->por_doing = false;
+<<<<<<< HEAD
 <<<<<<< HEAD
 	if (!err && need_writecp) {
 		f2fs_msg(sbi->sb, KERN_INFO, "recovery complete");
@@ -658,5 +670,16 @@ out:
 	if (!err && need_writecp)
 		write_checkpoint(sbi, false);
 >>>>>>> 2f842f1... fs: add support for f2fs
+=======
+	if (err) {
+		discard_next_dnode(sbi, blkaddr);
+
+		/* Flush all the NAT/SIT pages */
+		while (get_pages(sbi, F2FS_DIRTY_META))
+			sync_meta_pages(sbi, META, LONG_MAX);
+	} else if (need_writecp) {
+		write_checkpoint(sbi, false);
+	}
+>>>>>>> 53f8f53... f2fs: avoid retrying wrong recovery routine when error was occurred
 	return err;
 }

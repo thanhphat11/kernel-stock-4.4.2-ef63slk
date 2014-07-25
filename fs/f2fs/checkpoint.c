@@ -1069,6 +1069,7 @@ static void wait_on_all_pages_writeback(struct f2fs_sb_info *sbi)
 static void do_checkpoint(struct f2fs_sb_info *sbi, bool is_umount)
 {
 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
+	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_WARM_NODE);
 	nid_t last_nid = 0;
 	block_t start_blk;
 	struct page *cp_page;
@@ -1084,8 +1085,12 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, bool is_umount)
 	 * This avoids to conduct wrong roll-forward operations and uses
 	 * metapages, so should be called prior to sync_meta_pages below.
 	 */
+<<<<<<< HEAD
 	discard_next_dnode(sbi);
 >>>>>>> 2f842f1... fs: add support for f2fs
+=======
+	discard_next_dnode(sbi, NEXT_FREE_BLKADDR(sbi, curseg));
+>>>>>>> 53f8f53... f2fs: avoid retrying wrong recovery routine when error was occurred
 
 	/* Flush all the NAT/SIT pages */
 	while (get_pages(sbi, F2FS_DIRTY_META))
