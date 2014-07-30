@@ -1094,14 +1094,12 @@ void allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
 {
 	struct sit_info *sit_i = SIT_I(sbi);
 	struct curseg_info *curseg;
-	unsigned int old_cursegno;
 
 	curseg = CURSEG_I(sbi, type);
 
 	mutex_lock(&curseg->curseg_mutex);
 
 	*new_blkaddr = NEXT_FREE_BLKADDR(sbi, curseg);
-	old_cursegno = curseg->segno;
 
 	/*
 	 * __add_sum_entry should be resided under the curseg_mutex
@@ -1126,6 +1124,7 @@ void allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
 	 */
 	refresh_sit_entry(sbi, old_blkaddr, *new_blkaddr);
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 	if (!__has_curseg_space(sbi, type))
 		sit_i->s_ops->allocate_segment(sbi, type, false);
@@ -1134,6 +1133,8 @@ void allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
 	locate_dirty_segment(sbi, GET_SEGNO(sbi, old_blkaddr));
 =======
 	locate_dirty_segment(sbi, old_cursegno);
+=======
+>>>>>>> b3f9a82... f2fs: remove redundant lines in allocate_data_block
 
 >>>>>>> 2f842f1... fs: add support for f2fs
 	mutex_unlock(&sit_i->sentry_lock);
