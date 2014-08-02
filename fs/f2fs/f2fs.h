@@ -1442,7 +1442,11 @@ void alloc_nid_failed(struct f2fs_sb_info *, nid_t);
 void recover_node_page(struct f2fs_sb_info *, struct page *,
 		struct f2fs_summary *, struct node_info *, block_t);
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+void recover_inline_xattr(struct inode *, struct page *);
+>>>>>>> 7e08820... f2fs: avoid skipping recover_inline_xattr after recover_inline_data
 bool recover_xattr_data(struct inode *, struct page *, block_t);
 >>>>>>> 2f842f1... fs: add support for f2fs
 int recover_inode_page(struct f2fs_sb_info *, struct page *);
