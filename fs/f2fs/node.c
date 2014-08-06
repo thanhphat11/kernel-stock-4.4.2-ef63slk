@@ -328,7 +328,7 @@ retry:
 			nat_get_blkaddr(e) != NULL_ADDR &&
 			new_blkaddr == NEW_ADDR);
 
-	/* increament version no as node is removed */
+	/* increment version no as node is removed */
 	if (nat_get_blkaddr(e) != NEW_ADDR && new_blkaddr == NULL_ADDR) {
 		unsigned char version = nat_get_version(e);
 		nat_set_version(e, inc_node_version(version));
@@ -374,7 +374,7 @@ int try_to_free_nats(struct f2fs_sb_info *sbi, int nr_shrink)
 }
 
 /*
- * This function returns always success
+ * This function always returns success
  */
 void get_node_info(struct f2fs_sb_info *sbi, nid_t nid, struct node_info *ni)
 {
@@ -763,7 +763,7 @@ static int truncate_partial_nodes(struct dnode_of_data *dn,
 
 	/* get indirect nodes in the path */
 	for (i = 0; i < idx + 1; i++) {
-		/* refernece count'll be increased */
+		/* reference count'll be increased */
 		pages[i] = get_node_page(sbi, nid[i]);
 		if (IS_ERR(pages[i])) {
 			err = PTR_ERR(pages[i]);
@@ -958,6 +958,7 @@ void remove_inode_page(struct inode *inode)
 		f2fs_put_page(page, 1);
 		return;
 	}
+<<<<<<< HEAD
 	/* 0 is possible, after f2fs_new_inode() is failed */
 <<<<<<< HEAD
 	if (inode->i_blocks != 0 && inode->i_blocks != 1) {
@@ -966,6 +967,9 @@ void remove_inode_page(struct inode *inode)
 		f2fs_handle_error(sbi);
 	}
 =======
+=======
+	/* 0 is possible, after f2fs_new_inode() has failed */
+>>>>>>> aca40b3... f2fs: fix typo
 	f2fs_bug_on(inode->i_blocks != 0 && inode->i_blocks != 1);
 >>>>>>> 2f842f1... fs: add support for f2fs
 	set_new_dnode(&dn, inode, page, page, ino);
@@ -1963,7 +1967,7 @@ int recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)
 	if (!ipage)
 		return -ENOMEM;
 
-	/* Should not use this inode  from free nid list */
+	/* Should not use this inode from free nid list */
 	remove_free_nid(NM_I(sbi), ino);
 
 <<<<<<< HEAD
@@ -2007,6 +2011,7 @@ int recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)
 /*
  * ra_sum_pages() merge contiguous pages into one bio and submit.
 <<<<<<< HEAD
+<<<<<<< HEAD
  * these pre-readed pages are linked in pages list.
  */
 static int ra_sum_pages(struct f2fs_sb_info *sbi, struct list_head *pages,
@@ -2016,6 +2021,9 @@ static int ra_sum_pages(struct f2fs_sb_info *sbi, struct list_head *pages,
 	int page_idx = start;
 =======
  * these pre-readed pages are alloced in bd_inode's mapping tree.
+=======
+ * these pre-read pages are allocated in bd_inode's mapping tree.
+>>>>>>> aca40b3... f2fs: fix typo
  */
 static int ra_sum_pages(struct f2fs_sb_info *sbi, struct page **pages,
 				int start, int nrpages)
@@ -2111,7 +2119,7 @@ int restore_node_summary(struct f2fs_sb_info *sbi,
 	for (i = 0; !err && i < last_offset; i += nrpages, addr += nrpages) {
 		nrpages = min(last_offset - i, bio_blocks);
 
-		/* read ahead node pages */
+		/* readahead node pages */
 		nrpages = ra_sum_pages(sbi, pages, addr, nrpages);
 		if (!nrpages)
 			return -ENOMEM;
