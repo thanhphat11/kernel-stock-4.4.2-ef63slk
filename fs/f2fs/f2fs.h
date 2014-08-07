@@ -1720,6 +1720,10 @@ int f2fs_write_inline_data(struct inode *, struct page *, unsigned int);
 <<<<<<< HEAD
 =======
 void truncate_inline_data(struct inode *, u64);
+<<<<<<< HEAD
 >>>>>>> 2f842f1... fs: add support for f2fs
 int recover_inline_data(struct inode *, struct page *);
+=======
+bool recover_inline_data(struct inode *, struct page *);
+>>>>>>> 5070899... f2fs: make clear on test condition and return types
 #endif
