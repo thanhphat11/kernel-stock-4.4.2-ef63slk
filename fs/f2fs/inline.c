@@ -145,9 +145,10 @@ out:
 	return err;
 }
 
-int f2fs_convert_inline_data(struct inode *inode, pgoff_t to_size)
+int f2fs_convert_inline_data(struct inode *inode, pgoff_t to_size,
+						struct page *page)
 {
-	struct page *page;
+	struct page *new_page = page;
 	int err;
 
 	if (!f2fs_has_inline_data(inode))
@@ -156,20 +157,29 @@ int f2fs_convert_inline_data(struct inode *inode, pgoff_t to_size)
 		return 0;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	page = grab_cache_page_write_begin(inode->i_mapping, 0, AOP_FLAG_NOFS);
 =======
 	page = grab_cache_page(inode->i_mapping, 0);
 >>>>>>> 2f842f1... fs: add support for f2fs
 	if (!page)
 		return -ENOMEM;
+=======
+	if (!page || page->index != 0) {
+		new_page = grab_cache_page(inode->i_mapping, 0);
+		if (!new_page)
+			return -ENOMEM;
+	}
+>>>>>>> d02e70c... f2fs: should convert inline_data during the mkwrite
 
-	err = __f2fs_convert_inline_data(inode, page);
-	f2fs_put_page(page, 1);
+	err = __f2fs_convert_inline_data(inode, new_page);
+	if (!page || page->index != 0)
+		f2fs_put_page(new_page, 1);
 	return err;
 }
 
 int f2fs_write_inline_data(struct inode *inode,
-			   struct page *page, unsigned size)
+				struct page *page, unsigned size)
 {
 	void *src_addr, *dst_addr;
 	struct page *ipage;

@@ -1143,7 +1143,7 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
 >>>>>>> 2f842f1... fs: add support for f2fs
 	f2fs_balance_fs(sbi);
 repeat:
-	err = f2fs_convert_inline_data(inode, pos + len);
+	err = f2fs_convert_inline_data(inode, pos + len, NULL);
 	if (err)
 <<<<<<< HEAD
 		return err;
