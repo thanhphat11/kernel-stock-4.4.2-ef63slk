@@ -654,6 +654,7 @@ int recover_fsync_data(struct f2fs_sb_info *sbi)
 	/* step #2: recover data */
 	err = recover_data(sbi, &inode_list, CURSEG_WARM_NODE);
 <<<<<<< HEAD
+<<<<<<< HEAD
 	if (!list_empty(&inode_list)) {
 		f2fs_handle_error(sbi);
 		err = -EIO;
@@ -661,6 +662,10 @@ int recover_fsync_data(struct f2fs_sb_info *sbi)
 =======
 	f2fs_bug_on(!list_empty(&inode_list));
 >>>>>>> 2f842f1... fs: add support for f2fs
+=======
+	if (!err)
+		f2fs_bug_on(!list_empty(&inode_list));
+>>>>>>> 666a881... f2fs: avoid bug_on when error is occurred
 out:
 	destroy_fsync_dnodes(&inode_list);
 	kmem_cache_destroy(fsync_entry_slab);
