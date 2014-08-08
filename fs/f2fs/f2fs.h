@@ -1446,9 +1446,13 @@ void recover_node_page(struct f2fs_sb_info *, struct page *,
 =======
 =======
 void recover_inline_xattr(struct inode *, struct page *);
+<<<<<<< HEAD
 >>>>>>> 7e08820... f2fs: avoid skipping recover_inline_xattr after recover_inline_data
 bool recover_xattr_data(struct inode *, struct page *, block_t);
 >>>>>>> 2f842f1... fs: add support for f2fs
+=======
+void recover_xattr_data(struct inode *, struct page *, block_t);
+>>>>>>> 013a5da... f2fs: fix to recover inline_xattr/data and blocks
 int recover_inode_page(struct f2fs_sb_info *, struct page *);
 int restore_node_summary(struct f2fs_sb_info *, unsigned int,
 				struct f2fs_summary_block *);

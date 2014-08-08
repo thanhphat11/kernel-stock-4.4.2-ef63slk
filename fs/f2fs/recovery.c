@@ -421,11 +421,15 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
 	struct node_info ni;
 	int err = 0, recovered = 0;
 
-	recover_inline_xattr(inode, page);
-
-	if (recover_inline_data(inode, page))
+	/* step 1: recover xattr */
+	if (IS_INODE(page)) {
+		recover_inline_xattr(inode, page);
+	} else if (f2fs_has_xattr_block(ofs_of_node(page))) {
+		recover_xattr_data(inode, page, blkaddr);
 		goto out;
+	}
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 	start = start_bidx_of_node(ofs_of_node(page), fi);
 	if (IS_INODE(page))
@@ -434,8 +438,13 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
 		end = start + ADDRS_PER_BLOCK;
 =======
 	if (recover_xattr_data(inode, page, blkaddr))
+=======
+	/* step 2: recover inline data */
+	if (recover_inline_data(inode, page))
+>>>>>>> 013a5da... f2fs: fix to recover inline_xattr/data and blocks
 		goto out;
 
+	/* step 3: recover data indices */
 	start = start_bidx_of_node(ofs_of_node(page), fi);
 	end = start + ADDRS_PER_PAGE(page, fi);
 >>>>>>> 2f842f1... fs: add support for f2fs
