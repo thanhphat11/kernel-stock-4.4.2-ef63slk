@@ -1100,6 +1100,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
 	struct inode *root;
 	long err = -EINVAL;
 <<<<<<< HEAD
+<<<<<<< HEAD
 	const char *descr = "";
 	int i;
 
@@ -1108,6 +1109,12 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
 	int i;
 
 >>>>>>> 2f842f1... fs: add support for f2fs
+=======
+	bool retry = true;
+	int i;
+
+try_onemore:
+>>>>>>> 0101fd7... f2fs: give a chance to mount again when encountering errors
 	/* allocate memory for f2fs-specific super block info */
 	sbi = kzalloc(sizeof(struct f2fs_sb_info), GFP_KERNEL);
 	if (!sbi)
@@ -1347,9 +1354,11 @@ fail:
 	/* recover fsynced data */
 	if (!test_opt(sbi, DISABLE_ROLL_FORWARD)) {
 		err = recover_fsync_data(sbi);
-		if (err)
+		if (err) {
 			f2fs_msg(sb, KERN_ERR,
 				"Cannot recover all fsync data errno=%ld", err);
+			goto free_kobj;
+		}
 	}
 
 	/*
@@ -1397,9 +1406,19 @@ free_sb_buf:
 free_sbi:
 	kfree(sbi);
 <<<<<<< HEAD
+<<<<<<< HEAD
 	f2fs_msg(sb, KERN_ERR, "mount failed");
 =======
 >>>>>>> 2f842f1... fs: add support for f2fs
+=======
+
+	/* give only one another chance */
+	if (retry) {
+		retry = !retry;
+		shrink_dcache_sb(sb);
+		goto try_onemore;
+	}
+>>>>>>> 0101fd7... f2fs: give a chance to mount again when encountering errors
 	return err;
 }
 
