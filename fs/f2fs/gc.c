@@ -709,8 +709,12 @@ gc_more:
 	if (unlikely(!(sbi->sb->s_flags & MS_ACTIVE)))
 		goto stop;
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 	if (unlikely(is_set_ckpt_flags(F2FS_CKPT(sbi), CP_ERROR_FLAG)))
+=======
+	if (unlikely(f2fs_cp_error(sbi)))
+>>>>>>> 79e7c86... f2fs: introduce f2fs_cp_error for readability
 		goto stop;
 >>>>>>> 2f842f1... fs: add support for f2fs
 
