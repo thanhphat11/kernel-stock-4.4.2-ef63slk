@@ -1247,6 +1247,10 @@ void write_checkpoint(struct f2fs_sb_info *sbi, bool is_umount)
 	trace_f2fs_write_checkpoint(sbi->sb, is_umount, "start block_ops");
 
 	mutex_lock(&sbi->cp_mutex);
+
+	if (!sbi->s_dirty)
+		goto out;
+
 	block_operations(sbi);
 
 	trace_f2fs_write_checkpoint(sbi->sb, is_umount, "finish block_ops");
@@ -1271,12 +1275,18 @@ void write_checkpoint(struct f2fs_sb_info *sbi, bool is_umount)
 	do_checkpoint(sbi, is_umount);
 
 	unblock_operations(sbi);
+<<<<<<< HEAD
 	mutex_unlock(&sbi->cp_mutex);
 
 <<<<<<< HEAD
 =======
 	stat_inc_cp_count(sbi->stat_info);
 >>>>>>> 2f842f1... fs: add support for f2fs
+=======
+	stat_inc_cp_count(sbi->stat_info);
+out:
+	mutex_unlock(&sbi->cp_mutex);
+>>>>>>> 03e8429... f2fs: check s_dirty under cp_mutex
 	trace_f2fs_write_checkpoint(sbi->sb, is_umount, "finish checkpoint");
 }
 
