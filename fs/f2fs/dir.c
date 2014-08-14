@@ -553,7 +553,7 @@ error:
 =======
 	/* once the failed inode becomes a bad inode, i_mode is S_IFREG */
 	truncate_inode_pages(&inode->i_data, 0);
-	truncate_blocks(inode, 0);
+	truncate_blocks(inode, 0, false);
 	remove_dirty_dir_inode(inode);
 >>>>>>> 2f842f1... fs: add support for f2fs
 	remove_inode_page(inode);
