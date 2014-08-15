@@ -1447,12 +1447,15 @@ int sync_node_pages(struct f2fs_sb_info *, nid_t, struct writeback_control *);
 bool alloc_nid(struct f2fs_sb_info *, nid_t *);
 void alloc_nid_done(struct f2fs_sb_info *, nid_t);
 void alloc_nid_failed(struct f2fs_sb_info *, nid_t);
+<<<<<<< HEAD
 void recover_node_page(struct f2fs_sb_info *, struct page *,
 		struct f2fs_summary *, struct node_info *, block_t);
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
 =======
+=======
+>>>>>>> 214ecc2... f2fs: remove rewrite_node_page
 void recover_inline_xattr(struct inode *, struct page *);
 <<<<<<< HEAD
 >>>>>>> 7e08820... f2fs: avoid skipping recover_inline_xattr after recover_inline_data
@@ -1501,8 +1504,6 @@ void write_data_page(struct page *, struct dnode_of_data *, block_t *,
 					struct f2fs_io_info *);
 void rewrite_data_page(struct page *, block_t, struct f2fs_io_info *);
 void recover_data_page(struct f2fs_sb_info *, struct page *,
-				struct f2fs_summary *, block_t, block_t);
-void rewrite_node_page(struct f2fs_sb_info *, struct page *,
 				struct f2fs_summary *, block_t, block_t);
 void allocate_data_block(struct f2fs_sb_info *, struct page *,
 		block_t, block_t *, struct f2fs_summary *, int);

@@ -1248,6 +1248,7 @@ void recover_data_page(struct f2fs_sb_info *sbi,
 	mutex_unlock(&curseg->curseg_mutex);
 }
 
+<<<<<<< HEAD
 void rewrite_node_page(struct f2fs_sb_info *sbi,
 			struct page *page, struct f2fs_summary *sum,
 			block_t old_blkaddr, block_t new_blkaddr)
@@ -1315,6 +1316,8 @@ void rewrite_node_page(struct f2fs_sb_info *sbi,
 
 <<<<<<< HEAD
 =======
+=======
+>>>>>>> 214ecc2... f2fs: remove rewrite_node_page
 static inline bool is_merged_page(struct f2fs_sb_info *sbi,
 					struct page *page, enum page_type type)
 {

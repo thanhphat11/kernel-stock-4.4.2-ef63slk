@@ -1864,6 +1864,7 @@ void alloc_nid_failed(struct f2fs_sb_info *sbi, nid_t nid)
 >>>>>>> 2f842f1... fs: add support for f2fs
 }
 
+<<<<<<< HEAD
 void recover_node_page(struct f2fs_sb_info *sbi, struct page *page,
 		struct f2fs_summary *sum, struct node_info *ni,
 		block_t new_blkaddr)
@@ -1879,6 +1880,8 @@ void recover_node_page(struct f2fs_sb_info *sbi, struct page *page,
 	clear_node_page_dirty(page);
 }
 
+=======
+>>>>>>> 214ecc2... f2fs: remove rewrite_node_page
 void recover_inline_xattr(struct inode *inode, struct page *page)
 {
 	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
