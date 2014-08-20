@@ -135,6 +135,25 @@ static int get_parent_ino(struct inode *inode, nid_t *pino)
 	return 1;
 }
 
+static inline bool need_do_checkpoint(struct inode *inode)
+{
+	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
+	bool need_cp = false;
+
+	if (!S_ISREG(inode->i_mode) || inode->i_nlink != 1)
+		need_cp = true;
+	else if (file_wrong_pino(inode))
+		need_cp = true;
+	else if (!space_for_roll_forward(sbi))
+		need_cp = true;
+	else if (!is_checkpointed_node(sbi, F2FS_I(inode)->i_pino))
+		need_cp = true;
+	else if (F2FS_I(inode)->xattr_ver == cur_cp_version(F2FS_CKPT(sbi)))
+		need_cp = true;
+
+	return need_cp;
+}
+
 int f2fs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
 {
 	struct inode *inode = file->f_mapping->host;
@@ -187,15 +206,19 @@ int f2fs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
 	f2fs_balance_fs(sbi);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	mutex_lock(&inode->i_mutex);
 =======
 	down_read(&fi->i_sem);
 >>>>>>> 2f842f1... fs: add support for f2fs
 
+=======
+>>>>>>> 65f7db0... f2fs: introduce need_do_checkpoint for readability
 	/*
 	 * Both of fdatasync() and fsync() are able to be recovered from
 	 * sudden-power-off.
 	 */
+<<<<<<< HEAD
 	if (!S_ISREG(inode->i_mode) || inode->i_nlink != 1)
 		need_cp = true;
 	else if (file_wrong_pino(inode))
@@ -216,6 +239,10 @@ int f2fs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
 		/* all the dirty node pages should be flushed for POR */
 		ret = f2fs_sync_fs(inode->i_sb, 1);
 =======
+=======
+	down_read(&fi->i_sem);
+	need_cp = need_do_checkpoint(inode);
+>>>>>>> 65f7db0... f2fs: introduce need_do_checkpoint for readability
 	up_read(&fi->i_sem);
 
 	if (need_cp) {
