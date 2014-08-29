@@ -42,7 +42,8 @@ static void TEA_transform(unsigned int buf[4], unsigned int const in[])
 	buf[1] += b1;
 }
 
-static void str2hashbuf(const char *msg, size_t len, unsigned int *buf, int num)
+static void str2hashbuf(const unsigned char *msg, size_t len,
+				unsigned int *buf, int num)
 {
 	unsigned pad, val;
 	int i;
@@ -77,11 +78,15 @@ f2fs_hash_t f2fs_dentry_hash(const struct qstr *name_info)
 {
 	__u32 hash;
 	f2fs_hash_t f2fs_hash;
-	const char *p;
+	const unsigned char *p;
 	__u32 in[8], buf[4];
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 	const char *name = name_info->name;
+=======
+	const unsigned char *name = name_info->name;
+>>>>>>> 19c62e3... f2fs: fix wrong casting for dentry name
 	size_t len = name_info->len;
 >>>>>>> 2f842f1... fs: add support for f2fs
 
