@@ -241,6 +241,9 @@ config CPU_FREQ_GOV_LIONHEART
 	  If in doubt, say N.
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> b5e3849... Add intelli demand v5 , fix Intelli_Plug
 config CPU_FREQ_GOV_ADAPTIVE
 	tristate "'adaptive' cpufreq policy governor"
 	help
@@ -262,8 +265,11 @@ config CPU_FREQ_GOV_ADAPTIVE
 
 	  If in doubt, say N.
 
+<<<<<<< HEAD
 =======
 >>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
+=======
+>>>>>>> b5e3849... Add intelli demand v5 , fix Intelli_Plug
 config CPU_FREQ_GOV_SMARTASSV2
 	tristate "'smartassV2' cpufreq governor"
 	depends on CPU_FREQ
@@ -470,12 +476,15 @@ config CPU_FREQ_GOV_SMARTMAX_G3
 	depends on CPU_FREQ_GOV_SMARTMAX
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 config CPU_FREQ_GOV_WHEATLEY
 	tristate "'wheatley' cpufreq governor"
 	depends on CPU_FREQ
 
 >>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
+=======
+>>>>>>> b5e3849... Add intelli demand v5 , fix Intelli_Plug
 config CPU_FREQ_GOV_USERSPACE
 	tristate "'userspace' governor for userspace frequency scaling"
 	help
@@ -492,12 +501,18 @@ config CPU_FREQ_GOV_USERSPACE
 	  If in doubt, say Y.
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> b5e3849... Add intelli demand v5 , fix Intelli_Plug
 config CPU_FREQ_GOV_WHEATLEY
 	tristate "'wheatley' cpufreq governor"
 	depends on CPU_FREQ
 
+<<<<<<< HEAD
 =======
 >>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
+=======
+>>>>>>> b5e3849... Add intelli demand v5 , fix Intelli_Plug
 config CPU_FREQ_GOV_ONDEMAND
 	tristate "'ondemand' cpufreq policy governor"
 	select CPU_FREQ_TABLE
@@ -517,14 +532,20 @@ config CPU_FREQ_GOV_ONDEMAND
 	  If in doubt, say N.
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> b5e3849... Add intelli demand v5 , fix Intelli_Plug
 config CPU_FREQ_GOV_SMARTASSH3
 	tristate "'smartassH3' cpufreq governor"
 	depends on CPU_FREQ
 	help
     		'smartassH3' - a "smart" governor
 
+<<<<<<< HEAD
 =======
 >>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
+=======
+>>>>>>> b5e3849... Add intelli demand v5 , fix Intelli_Plug
 config CPUFREQ_ID_PERFLOCK
 	bool "Intellidemand Performance Lock"
 	depends on CPU_FREQ_GOV_INTELLIDEMAND
@@ -641,6 +662,9 @@ config CPUFREQ_LIMIT_MAX_FREQ
 		Limit Max Freq while screen is on for Intellidemand governor
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> b5e3849... Add intelli demand v5 , fix Intelli_Plug
 config CPU_FREQ_DEFAULT_GOV_ADAPTIVE
 	bool "adaptive"
 	select CPU_FREQ_GOV_ADAPTIVE
@@ -652,8 +676,11 @@ config CPU_FREQ_DEFAULT_GOV_ADAPTIVE
 	  performance.
 
 
+<<<<<<< HEAD
 =======
 >>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
+=======
+>>>>>>> b5e3849... Add intelli demand v5 , fix Intelli_Plug
 config CPU_FREQ_GOV_INTELLIMM
         tristate "'intelliminmax' cpufreq policy governor"
         help
