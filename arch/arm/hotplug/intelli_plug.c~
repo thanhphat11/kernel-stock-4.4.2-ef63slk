@@ -38,11 +38,19 @@
 
 #define DEF_SAMPLING_MS			(268)
 
+<<<<<<< HEAD
 #define DUAL_PERSISTENCE		(2800 / DEF_SAMPLING_MS)
 #define TRI_PERSISTENCE			(1800 / DEF_SAMPLING_MS)
 #define QUAD_PERSISTENCE		(1200 / DEF_SAMPLING_MS)
 
 #define BUSY_PERSISTENCE		(3700 / DEF_SAMPLING_MS)
+=======
+#define DUAL_PERSISTENCE		(2500 / DEF_SAMPLING_MS)
+#define TRI_PERSISTENCE			(1700 / DEF_SAMPLING_MS)
+#define QUAD_PERSISTENCE		(1000 / DEF_SAMPLING_MS)
+
+#define BUSY_PERSISTENCE		(3500 / DEF_SAMPLING_MS)
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 
 static DEFINE_MUTEX(intelli_plug_mutex);
 

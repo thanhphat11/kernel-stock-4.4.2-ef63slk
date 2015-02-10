@@ -92,6 +92,10 @@ config DEVFREQ_GOV_MSM_CPUBW_HWMON
 
 config SIMPLE_GPU_ALGORITHM
 	bool "Simple GPU algorithm"
+<<<<<<< HEAD
+=======
+	default y
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	depends on DEVFREQ_GOV_MSM_ADRENO_TZ
 	help
 	  Simple user configurable GPU controlling algorithm

@@ -1,7 +1,11 @@
 /*
  *
  * Automatically generated file; DO NOT EDIT.
+<<<<<<< HEAD
  * Linux/arm 3.10.109 Kernel Configuration
+=======
+ * Linux/arm 3.4.47 Kernel Configuration
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
  *
  */
 /*

@@ -23,6 +23,7 @@ config ARM
 	select HAVE_GENERIC_DMA_COHERENT
 	select HAVE_KERNEL_GZIP
 	select HAVE_KERNEL_LZO
+	select HAVE_KERNEL_LZ4
 	select HAVE_KERNEL_LZMA
 	select HAVE_KERNEL_XZ
 	select HAVE_IRQ_WORK
@@ -1492,6 +1493,7 @@ config KSAPI
 endmenu
 
 source "arch/arm/common/Kconfig"
+source "arch/arm/hotplug/Kconfig"
 
 menu "Bus support"
 
@@ -2436,6 +2438,13 @@ config NEON
 	  Say Y to include support code for NEON, the ARMv7 Advanced SIMD
 	  Extension.
 
+config KERNEL_MODE_NEON
+	bool "Support for NEON in kernel mode"
+	default n
+	depends on NEON
+	help
+	  Say Y to include support for NEON in kernel mode.
+
 endmenu
 
 menu "Userspace binary formats"
@@ -2611,6 +2620,7 @@ config SKY_DS_ANDROID_SECURITY_PATCH_CVE_2014_4943
 	  Since this can never have worked so nobody could possibly have depended 
 	  on that functionality, just remove the broken code and return -EINVAL.	  
 
+<<<<<<< HEAD
 endmenu
 #endif /* FEATURE_SKY_DS_KERNEL_CONFIG */
 
@@ -2627,3 +2637,15 @@ source "security/Kconfig"
 source "crypto/Kconfig"
 
 source "lib/Kconfig"
+=======
+config LGU_DS_SECURITY_PATCH_CVE_2014_4943
+	bool "net/l2tp: don't fall back on UDP [get|set]sockopt"
+	depends on LGU_DS_K_CONFIG
+	default y
+	help
+	  The l2tp [get|set]sockopt() code has fallen back to the UDP functions
+	  for socket option levels != SOL_PPPOL2TP since day one, but that has
+	  never actually worked, since the l2tp socket isn't an inet socket.
+	  https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=3cf521f7dc87c031617fd47e4b7aa2593c2f3daf
+#CONFIG_LGU_DS_K_CONFIG
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks

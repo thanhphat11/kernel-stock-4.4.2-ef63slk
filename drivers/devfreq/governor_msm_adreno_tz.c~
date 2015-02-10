@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 /* Copyright (c) 2010-2014, The Linux Foundation. All rights reserved.
+=======
+/* Copyright (c) 2010-2013, The Linux Foundation. All rights reserved.
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -28,11 +32,15 @@ static DEFINE_SPINLOCK(tz_lock);
  * FLOOR is 5msec to capture up to 3 re-draws
  * per frame for 60fps content.
  */
+<<<<<<< HEAD
 #define FLOOR		        5000
 /*
  * MIN_BUSY is 1 msec for the sample to be sent
  */
 #define MIN_BUSY		1000
+=======
+#define FLOOR			5000
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 #define LONG_FLOOR		50000
 #define HIST			5
 #define TARGET			80
@@ -84,12 +92,15 @@ static void _update_cutoff(struct devfreq_msm_adreno_tz_data *priv,
 	}
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_SIMPLE_GPU_ALGORITHM
 extern int simple_gpu_active;
 extern int simple_gpu_algorithm(int level,
 				struct devfreq_msm_adreno_tz_data *priv);
 #endif
 
+=======
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 static int tz_get_target_freq(struct devfreq *devfreq, unsigned long *freq,
 				u32 *flag)
 {
@@ -126,6 +137,7 @@ static int tz_get_target_freq(struct devfreq *devfreq, unsigned long *freq,
 	/*
 	 * Do not waste CPU cycles running this algorithm if
 	 * the GPU just started, or if less than FLOOR time
+<<<<<<< HEAD
 	 * has passed since the last run or the gpu hasn't been
 	 * busier than MIN_BUSY.
 	 */
@@ -133,6 +145,13 @@ static int tz_get_target_freq(struct devfreq *devfreq, unsigned long *freq,
 		(priv->bin.total_time < FLOOR) ||
 		(unsigned int) priv->bin.busy_time < MIN_BUSY) {
 		return 0;
+=======
+	 * has passed since the last run.
+	 */
+	if ((stats.total_time == 0) ||
+		(priv->bin.total_time < FLOOR)) {
+		return 1;
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	}
 
 	level = devfreq_get_freq_level(devfreq, stats.current_frequency);
@@ -149,6 +168,7 @@ static int tz_get_target_freq(struct devfreq *devfreq, unsigned long *freq,
 	if (priv->bin.busy_time > CEILING) {
 		val = -1 * level;
 	} else {
+<<<<<<< HEAD
 #ifdef CONFIG_SIMPLE_GPU_ALGORITHM
 		if (simple_gpu_active != 0)
 			val = simple_gpu_algorithm(level, priv);
@@ -158,11 +178,16 @@ static int tz_get_target_freq(struct devfreq *devfreq, unsigned long *freq,
 					priv->bin.total_time,
 					priv->bin.busy_time);
 #else
+=======
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 		val = __secure_tz_entry3(TZ_UPDATE_ID,
 				level,
 				priv->bin.total_time,
 				priv->bin.busy_time);
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	}
 	priv->bin.total_time = 0;
 	priv->bin.busy_time = 0;

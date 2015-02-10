@@ -91,7 +91,11 @@ static inline bool has_enough_invalid_blocks(struct f2fs_sb_info *sbi)
 	block_t invalid_user_blocks = sbi->user_block_count -
 					written_block_count(sbi);
 	/*
+<<<<<<< HEAD
 	 * Background GC is triggered with the following conditions.
+=======
+	 * Background GC is triggered with the following condition.
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	 * 1. There are a number of invalid blocks.
 	 * 2. There is not enough free space.
 	 */

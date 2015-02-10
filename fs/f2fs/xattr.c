@@ -25,7 +25,11 @@
 #include "xattr.h"
 
 static size_t f2fs_xattr_generic_list(struct dentry *dentry, char *list,
+<<<<<<< HEAD
 		size_t list_size, const char *name, size_t len, int type)
+=======
+		size_t list_size, const char *name, size_t name_len, int type)
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 {
 	struct f2fs_sb_info *sbi = F2FS_SB(dentry->d_sb);
 	int total_len, prefix_len = 0;
@@ -52,11 +56,19 @@ static size_t f2fs_xattr_generic_list(struct dentry *dentry, char *list,
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	total_len = prefix_len + len + 1;
 	if (list && total_len <= list_size) {
 		memcpy(list, prefix, prefix_len);
 		memcpy(list + prefix_len, name, len);
 		list[prefix_len + len] = '\0';
+=======
+	total_len = prefix_len + name_len + 1;
+	if (list && total_len <= list_size) {
+		memcpy(list, prefix, prefix_len);
+		memcpy(list + prefix_len, name, name_len);
+		list[prefix_len + name_len] = '\0';
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	}
 	return total_len;
 }
@@ -107,12 +119,20 @@ static int f2fs_xattr_generic_set(struct dentry *dentry, const char *name,
 	if (strcmp(name, "") == 0)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	return f2fs_setxattr(dentry->d_inode, type, name,
 					value, size, NULL, flags);
 }
 
 static size_t f2fs_xattr_advise_list(struct dentry *dentry, char *list,
 		size_t list_size, const char *name, size_t len, int type)
+=======
+	return f2fs_setxattr(dentry->d_inode, type, name, value, size, NULL);
+}
+
+static size_t f2fs_xattr_advise_list(struct dentry *dentry, char *list,
+		size_t list_size, const char *name, size_t name_len, int type)
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 {
 	const char *xname = F2FS_SYSTEM_ADVISE_PREFIX;
 	size_t size;
@@ -131,10 +151,18 @@ static int f2fs_xattr_advise_get(struct dentry *dentry, const char *name,
 {
 	struct inode *inode = dentry->d_inode;
 
+<<<<<<< HEAD
 	if (strcmp(name, "") != 0)
 		return -EINVAL;
 
 	*((char *)buffer) = F2FS_I(inode)->i_advise;
+=======
+	if (!name || strcmp(name, "") != 0)
+		return -EINVAL;
+
+	if (buffer)
+		*((char *)buffer) = F2FS_I(inode)->i_advise;
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	return sizeof(char);
 }
 
@@ -143,18 +171,32 @@ static int f2fs_xattr_advise_set(struct dentry *dentry, const char *name,
 {
 	struct inode *inode = dentry->d_inode;
 
+<<<<<<< HEAD
 	if (strcmp(name, "") != 0)
+=======
+	if (!name || strcmp(name, "") != 0)
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 		return -EINVAL;
 	if (!inode_owner_or_capable(inode))
 		return -EPERM;
 	if (value == NULL)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	F2FS_I(inode)->i_advise |= *(char *)value;
+=======
+	F2FS_I(inode)->i_advise = *(char *)value;
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	return 0;
 }
 
 #ifdef CONFIG_F2FS_FS_SECURITY
+<<<<<<< HEAD
+=======
+static int __f2fs_setxattr(struct inode *inode, int name_index,
+			const char *name, const void *value, size_t value_len,
+			struct page *ipage);
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 static int f2fs_initxattrs(struct inode *inode, const struct xattr *xattr_array,
 		void *page)
 {
@@ -162,9 +204,15 @@ static int f2fs_initxattrs(struct inode *inode, const struct xattr *xattr_array,
 	int err = 0;
 
 	for (xattr = xattr_array; xattr->name != NULL; xattr++) {
+<<<<<<< HEAD
 		err = f2fs_setxattr(inode, F2FS_XATTR_INDEX_SECURITY,
 				xattr->name, xattr->value,
 				xattr->value_len, (struct page *)page, 0);
+=======
+		err = __f2fs_setxattr(inode, F2FS_XATTR_INDEX_SECURITY,
+				xattr->name, xattr->value,
+				xattr->value_len, (struct page *)page);
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 		if (err < 0)
 			break;
 	}
@@ -238,6 +286,7 @@ const struct xattr_handler *f2fs_xattr_handlers[] = {
 	NULL,
 };
 
+<<<<<<< HEAD
 static inline const struct xattr_handler *f2fs_xattr_handler(int index)
 {
 	const struct xattr_handler *handler = NULL;
@@ -249,15 +298,36 @@ static inline const struct xattr_handler *f2fs_xattr_handler(int index)
 
 static struct f2fs_xattr_entry *__find_xattr(void *base_addr, int index,
 					size_t len, const char *name)
+=======
+static inline const struct xattr_handler *f2fs_xattr_handler(int name_index)
+{
+	const struct xattr_handler *handler = NULL;
+
+	if (name_index > 0 && name_index < ARRAY_SIZE(f2fs_xattr_handler_map))
+		handler = f2fs_xattr_handler_map[name_index];
+	return handler;
+}
+
+static struct f2fs_xattr_entry *__find_xattr(void *base_addr, int name_index,
+					size_t name_len, const char *name)
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 {
 	struct f2fs_xattr_entry *entry;
 
 	list_for_each_xattr(entry, base_addr) {
+<<<<<<< HEAD
 		if (entry->e_name_index != index)
 			continue;
 		if (entry->e_name_len != len)
 			continue;
 		if (!memcmp(entry->e_name, name, len))
+=======
+		if (entry->e_name_index != name_index)
+			continue;
+		if (entry->e_name_len != name_len)
+			continue;
+		if (!memcmp(entry->e_name, name, name_len))
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 			break;
 	}
 	return entry;
@@ -272,7 +342,11 @@ static void *read_all_xattrs(struct inode *inode, struct page *ipage)
 
 	inline_size = inline_xattr_size(inode);
 
+<<<<<<< HEAD
 	txattr_addr = kzalloc(inline_size + size, GFP_F2FS_ZERO);
+=======
+	txattr_addr = kzalloc(inline_size + size, GFP_KERNEL);
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	if (!txattr_addr)
 		return NULL;
 
@@ -344,7 +418,10 @@ static inline int write_all_xattrs(struct inode *inode, __u32 hsize,
 
 		if (ipage) {
 			inline_addr = inline_xattr_addr(ipage);
+<<<<<<< HEAD
 			f2fs_wait_on_page_writeback(ipage, NODE);
+=======
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 		} else {
 			page = get_node_page(sbi, inode->i_ino);
 			if (IS_ERR(page)) {
@@ -352,7 +429,10 @@ static inline int write_all_xattrs(struct inode *inode, __u32 hsize,
 				return PTR_ERR(page);
 			}
 			inline_addr = inline_xattr_addr(page);
+<<<<<<< HEAD
 			f2fs_wait_on_page_writeback(page, NODE);
+=======
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 		}
 		memcpy(inline_addr, txattr_addr, inline_size);
 		f2fs_put_page(page, 1);
@@ -373,7 +453,10 @@ static inline int write_all_xattrs(struct inode *inode, __u32 hsize,
 			return PTR_ERR(xpage);
 		}
 		f2fs_bug_on(new_nid);
+<<<<<<< HEAD
 		f2fs_wait_on_page_writeback(xpage, NODE);
+=======
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	} else {
 		struct dnode_of_data dn;
 		set_new_dnode(&dn, inode, NULL, NULL, new_nid);
@@ -396,12 +479,17 @@ static inline int write_all_xattrs(struct inode *inode, __u32 hsize,
 	return 0;
 }
 
+<<<<<<< HEAD
 int f2fs_getxattr(struct inode *inode, int index, const char *name,
+=======
+int f2fs_getxattr(struct inode *inode, int name_index, const char *name,
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 		void *buffer, size_t buffer_size)
 {
 	struct f2fs_xattr_entry *entry;
 	void *base_addr;
 	int error = 0;
+<<<<<<< HEAD
 	size_t size, len;
 
 	if (name == NULL)
@@ -410,29 +498,52 @@ int f2fs_getxattr(struct inode *inode, int index, const char *name,
 	len = strlen(name);
 	if (len > F2FS_NAME_LEN)
 		return -ERANGE;
+=======
+	size_t value_len, name_len;
+
+	if (name == NULL)
+		return -EINVAL;
+	name_len = strlen(name);
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 
 	base_addr = read_all_xattrs(inode, NULL);
 	if (!base_addr)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	entry = __find_xattr(base_addr, index, len, name);
+=======
+	entry = __find_xattr(base_addr, name_index, name_len, name);
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	if (IS_XATTR_LAST_ENTRY(entry)) {
 		error = -ENODATA;
 		goto cleanup;
 	}
 
+<<<<<<< HEAD
 	size = le16_to_cpu(entry->e_value_size);
 
 	if (buffer && size > buffer_size) {
+=======
+	value_len = le16_to_cpu(entry->e_value_size);
+
+	if (buffer && value_len > buffer_size) {
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 		error = -ERANGE;
 		goto cleanup;
 	}
 
 	if (buffer) {
 		char *pval = entry->e_name + entry->e_name_len;
+<<<<<<< HEAD
 		memcpy(buffer, pval, size);
 	}
 	error = size;
+=======
+		memcpy(buffer, pval, value_len);
+	}
+	error = value_len;
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 
 cleanup:
 	kzfree(base_addr);
@@ -476,15 +587,25 @@ cleanup:
 	return error;
 }
 
+<<<<<<< HEAD
 static int __f2fs_setxattr(struct inode *inode, int index,
 			const char *name, const void *value, size_t size,
 			struct page *ipage, int flags)
+=======
+static int __f2fs_setxattr(struct inode *inode, int name_index,
+			const char *name, const void *value, size_t value_len,
+			struct page *ipage)
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 {
 	struct f2fs_inode_info *fi = F2FS_I(inode);
 	struct f2fs_xattr_entry *here, *last;
 	void *base_addr;
 	int found, newsize;
+<<<<<<< HEAD
 	size_t len;
+=======
+	size_t name_len;
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	__u32 new_hsize;
 	int error = -ENOMEM;
 
@@ -492,11 +613,19 @@ static int __f2fs_setxattr(struct inode *inode, int index,
 		return -EINVAL;
 
 	if (value == NULL)
+<<<<<<< HEAD
 		size = 0;
 
 	len = strlen(name);
 
 	if (len > F2FS_NAME_LEN || size > MAX_VALUE_LEN(inode))
+=======
+		value_len = 0;
+
+	name_len = strlen(name);
+
+	if (name_len > F2FS_NAME_LEN || value_len > MAX_VALUE_LEN(inode))
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 		return -ERANGE;
 
 	base_addr = read_all_xattrs(inode, ipage);
@@ -504,6 +633,7 @@ static int __f2fs_setxattr(struct inode *inode, int index,
 		goto exit;
 
 	/* find entry with wanted name. */
+<<<<<<< HEAD
 	here = __find_xattr(base_addr, index, len, name);
 
 	found = IS_XATTR_LAST_ENTRY(here) ? 0 : 1;
@@ -521,13 +651,29 @@ static int __f2fs_setxattr(struct inode *inode, int index,
 		last = XATTR_NEXT_ENTRY(last);
 
 	newsize = XATTR_ALIGN(sizeof(struct f2fs_xattr_entry) + len + size);
+=======
+	here = __find_xattr(base_addr, name_index, name_len, name);
+
+	found = IS_XATTR_LAST_ENTRY(here) ? 0 : 1;
+	last = here;
+
+	while (!IS_XATTR_LAST_ENTRY(last))
+		last = XATTR_NEXT_ENTRY(last);
+
+	newsize = XATTR_ALIGN(sizeof(struct f2fs_xattr_entry) +
+			name_len + value_len);
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 
 	/* 1. Check space */
 	if (value) {
 		int free;
 		/*
 		 * If value is NULL, it is remove operation.
+<<<<<<< HEAD
 		 * In case of update operation, we calculate free.
+=======
+		 * In case of update operation, we caculate free.
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 		 */
 		free = MIN_OFFSET(inode) - ((char *)last - (char *)base_addr);
 		if (found)
@@ -563,12 +709,21 @@ static int __f2fs_setxattr(struct inode *inode, int index,
 		 * We just write new entry.
 		 */
 		memset(last, 0, newsize);
+<<<<<<< HEAD
 		last->e_name_index = index;
 		last->e_name_len = len;
 		memcpy(last->e_name, name, len);
 		pval = last->e_name + len;
 		memcpy(pval, value, size);
 		last->e_value_size = cpu_to_le16(size);
+=======
+		last->e_name_index = name_index;
+		last->e_name_len = name_len;
+		memcpy(last->e_name, name, name_len);
+		pval = last->e_name + name_len;
+		memcpy(pval, value, value_len);
+		last->e_value_size = cpu_to_le16(value_len);
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 		new_hsize += newsize;
 	}
 
@@ -584,18 +739,29 @@ static int __f2fs_setxattr(struct inode *inode, int index,
 
 	if (ipage)
 		update_inode(inode, ipage);
+<<<<<<< HEAD
+=======
+	else
+		update_inode_page(inode);
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 exit:
 	kzfree(base_addr);
 	return error;
 }
 
+<<<<<<< HEAD
 int f2fs_setxattr(struct inode *inode, int index, const char *name,
 				const void *value, size_t size,
 				struct page *ipage, int flags)
+=======
+int f2fs_setxattr(struct inode *inode, int name_index, const char *name,
+			const void *value, size_t value_len, struct page *ipage)
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 {
 	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
 	int err;
 
+<<<<<<< HEAD
 	/* this case is only from init_inode_metadata */
 	if (ipage)
 		return __f2fs_setxattr(inode, index, name, value,
@@ -607,6 +773,12 @@ int f2fs_setxattr(struct inode *inode, int index, const char *name,
 	down_write(&F2FS_I(inode)->i_sem);
 	err = __f2fs_setxattr(inode, index, name, value, size, ipage, flags);
 	up_write(&F2FS_I(inode)->i_sem);
+=======
+	f2fs_balance_fs(sbi);
+
+	f2fs_lock_op(sbi);
+	err = __f2fs_setxattr(inode, name_index, name, value, value_len, ipage);
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	f2fs_unlock_op(sbi);
 
 	return err;

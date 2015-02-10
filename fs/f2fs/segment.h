@@ -14,7 +14,11 @@
 #define NULL_SEGNO			((unsigned int)(~0))
 #define NULL_SECNO			((unsigned int)(~0))
 
+<<<<<<< HEAD
 #define DEF_RECLAIM_PREFREE_SEGMENTS	5	/* 5% over total segments */
+=======
+#define DEF_RECLAIM_PREFREE_SEGMENTS	100	/* 200MB of prefree segments */
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 
 /* L: Logical segment # in volume, R: Relative segment # in main area */
 #define GET_L2R_SEGNO(free_i, segno)	(segno - free_i->start_segno)
@@ -57,9 +61,12 @@
 	((blk_addr) - SM_I(sbi)->seg0_blkaddr)
 #define GET_SEGNO_FROM_SEG0(sbi, blk_addr)				\
 	(GET_SEGOFF_FROM_SEG0(sbi, blk_addr) >> sbi->log_blocks_per_seg)
+<<<<<<< HEAD
 #define GET_BLKOFF_FROM_SEG0(sbi, blk_addr)				\
 	(GET_SEGOFF_FROM_SEG0(sbi, blk_addr) & (sbi->blocks_per_seg - 1))
 
+=======
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 #define GET_SEGNO(sbi, blk_addr)					\
 	(((blk_addr == NULL_ADDR) || (blk_addr == NEW_ADDR)) ?		\
 	NULL_SEGNO : GET_L2R_SEGNO(FREE_I(sbi),			\
@@ -347,8 +354,13 @@ static inline void __set_test_and_free(struct f2fs_sb_info *sbi,
 	if (test_and_clear_bit(segno, free_i->free_segmap)) {
 		free_i->free_segments++;
 
+<<<<<<< HEAD
 		next = find_next_bit(free_i->free_segmap,
 				start_segno + sbi->segs_per_sec, start_segno);
+=======
+		next = find_next_bit(free_i->free_segmap, TOTAL_SEGS(sbi),
+								start_segno);
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 		if (next >= start_segno + sbi->segs_per_sec) {
 			if (test_and_clear_bit(secno, free_i->free_secmap))
 				free_i->free_sections++;
@@ -380,12 +392,34 @@ static inline void get_sit_bitmap(struct f2fs_sb_info *sbi,
 
 static inline block_t written_block_count(struct f2fs_sb_info *sbi)
 {
+<<<<<<< HEAD
 	return SIT_I(sbi)->written_valid_blocks;
+=======
+	struct sit_info *sit_i = SIT_I(sbi);
+	block_t vblocks;
+
+	mutex_lock(&sit_i->sentry_lock);
+	vblocks = sit_i->written_valid_blocks;
+	mutex_unlock(&sit_i->sentry_lock);
+
+	return vblocks;
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 }
 
 static inline unsigned int free_segments(struct f2fs_sb_info *sbi)
 {
+<<<<<<< HEAD
 	return FREE_I(sbi)->free_segments;
+=======
+	struct free_segmap_info *free_i = FREE_I(sbi);
+	unsigned int free_segs;
+
+	read_lock(&free_i->segmap_lock);
+	free_segs = free_i->free_segments;
+	read_unlock(&free_i->segmap_lock);
+
+	return free_segs;
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 }
 
 static inline int reserved_segments(struct f2fs_sb_info *sbi)
@@ -395,7 +429,18 @@ static inline int reserved_segments(struct f2fs_sb_info *sbi)
 
 static inline unsigned int free_sections(struct f2fs_sb_info *sbi)
 {
+<<<<<<< HEAD
 	return FREE_I(sbi)->free_sections;
+=======
+	struct free_segmap_info *free_i = FREE_I(sbi);
+	unsigned int free_secs;
+
+	read_lock(&free_i->segmap_lock);
+	free_secs = free_i->free_sections;
+	read_unlock(&free_i->segmap_lock);
+
+	return free_secs;
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 }
 
 static inline unsigned int prefree_segments(struct f2fs_sb_info *sbi)
@@ -486,10 +531,13 @@ static inline bool need_inplace_update(struct inode *inode)
 	if (S_ISDIR(inode->i_mode))
 		return false;
 
+<<<<<<< HEAD
 	/* this is only set during fdatasync */
 	if (is_inode_flag_set(F2FS_I(inode), FI_NEED_IPU))
 		return true;
 
+=======
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	switch (SM_I(sbi)->ipu_policy) {
 	case F2FS_IPU_FORCE:
 		return true;
@@ -549,7 +597,11 @@ static inline void verify_block_addr(struct f2fs_sb_info *sbi, block_t blk_addr)
 }
 
 /*
+<<<<<<< HEAD
  * Summary block is always treated as an invalid block
+=======
+ * Summary block is always treated as invalid block
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
  */
 static inline void check_block_count(struct f2fs_sb_info *sbi,
 		int segno, struct f2fs_sit_entry *raw_sit)
@@ -668,6 +720,7 @@ static inline unsigned int max_hw_blocks(struct f2fs_sb_info *sbi)
 	struct request_queue *q = bdev_get_queue(bdev);
 	return SECTOR_TO_BLOCK(sbi, queue_max_sectors(q));
 }
+<<<<<<< HEAD
 
 /*
  * It is very important to gather dirty pages and write at once, so that we can
@@ -711,3 +764,5 @@ static inline long nr_pages_to_write(struct f2fs_sb_info *sbi, int type,
 	wbc->nr_to_write = desired;
 	return desired - nr_to_write;
 }
+=======
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks

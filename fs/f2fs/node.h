@@ -17,11 +17,22 @@
 /* # of pages to perform readahead before building free nids */
 #define FREE_NID_PAGES 4
 
+<<<<<<< HEAD
 /* maximum readahead size for node during getting data blocks */
 #define MAX_RA_NODE		128
 
 /* control the memory footprint threshold (10MB per 1GB ram) */
 #define DEF_RAM_THRESHOLD	10
+=======
+/* maximum # of free node ids to produce during build_free_nids */
+#define MAX_FREE_NIDS (NAT_ENTRY_PER_BLOCK * FREE_NID_PAGES)
+
+/* maximum readahead size for node during getting data blocks */
+#define MAX_RA_NODE		128
+
+/* maximum cached nat entries to manage memory footprint */
+#define NM_WOUT_THRESHOLD	(64 * NAT_ENTRY_PER_BLOCK)
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 
 /* vector size for gang look-up from nat cache that consists of radix tree */
 #define NATVEC_SIZE	64
@@ -42,7 +53,10 @@ struct node_info {
 struct nat_entry {
 	struct list_head list;	/* for clean or dirty nat list */
 	bool checkpointed;	/* whether it is checkpointed or not */
+<<<<<<< HEAD
 	bool fsync_done;	/* whether the latest node has fsync mark */
+=======
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	struct node_info ni;	/* in-memory node information */
 };
 
@@ -56,6 +70,7 @@ struct nat_entry {
 #define nat_set_version(nat, v)		(nat->ni.version = v)
 
 #define __set_nat_cache_dirty(nm_i, ne)					\
+<<<<<<< HEAD
 	do {								\
 		ne->checkpointed = false;				\
 		list_move_tail(&ne->list, &nm_i->dirty_nat_entries);	\
@@ -65,6 +80,11 @@ struct nat_entry {
 		ne->checkpointed = true;				\
 		list_move_tail(&ne->list, &nm_i->nat_entries);		\
 	} while (0)
+=======
+	list_move_tail(&ne->list, &nm_i->dirty_nat_entries);
+#define __clear_nat_cache_dirty(nm_i, ne)				\
+	list_move_tail(&ne->list, &nm_i->nat_entries);
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 #define inc_node_version(version)	(++version)
 
 static inline void node_info_from_raw_nat(struct node_info *ni,
@@ -75,6 +95,7 @@ static inline void node_info_from_raw_nat(struct node_info *ni,
 	ni->version = raw_ne->version;
 }
 
+<<<<<<< HEAD
 static inline void raw_nat_from_node_info(struct f2fs_nat_entry *raw_ne,
 						struct node_info *ni)
 {
@@ -96,6 +117,8 @@ struct nat_entry_set {
 	unsigned int entry_cnt;		/* the # of nat entries in set */
 };
 
+=======
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 /*
  * For free nid mangement
  */
@@ -261,7 +284,11 @@ static inline bool IS_DNODE(struct page *node_page)
 {
 	unsigned int ofs = ofs_of_node(node_page);
 
+<<<<<<< HEAD
 	if (f2fs_has_xattr_block(ofs))
+=======
+	if (ofs == XATTR_NODE_OFFSET)
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 		return false;
 
 	if (ofs == 3 || ofs == 4 + NIDS_PER_BLOCK ||
@@ -279,7 +306,11 @@ static inline void set_nid(struct page *p, int off, nid_t nid, bool i)
 {
 	struct f2fs_node *rn = F2FS_NODE(p);
 
+<<<<<<< HEAD
 	f2fs_wait_on_page_writeback(p, NODE);
+=======
+	wait_on_page_writeback(p);
+>>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 
 	if (i)
 		rn->i.i_nid[off - NODE_DIR1_BLOCK] = cpu_to_le32(nid);
