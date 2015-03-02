@@ -248,22 +248,23 @@ int ping_init_sock(struct sock *sk)
 	struct net *net = sock_net(sk);
 	gid_t group = current_egid();
 	gid_t range[2];
-#ifdef CONFIG_LGU_DS_SECURITY_PATCH_CVE_2014_2851
+#ifndef CONFIG_SKY_DS_ANDROID_SECURITY_PATCH_CVE_2014_2851
+	struct group_info *group_info = get_current_groups();
+	int i, j, count = group_info->ngroups;
+#else
 	struct group_info *group_info;
 	int i, j, count;
 	int ret = 0;
-#else
-	struct group_info *group_info = get_current_groups();
-	int i, j, count = group_info->ngroups;
-#endif /* CONFIG_LGU_DS_SECURITY_PATCH_CVE_2014_2851 */
+#endif /* CONFIG_SKY_DS_ANDROID_SECURITY_PATCH_CVE_2014_2851 */
+
 	inet_get_ping_group_range_net(net, range, range+1);
 	if (range[0] <= group && group <= range[1])
 		return 0;
 
-#ifdef CONFIG_LGU_DS_SECURITY_PATCH_CVE_2014_2851
+#ifdef CONFIG_SKY_DS_ANDROID_SECURITY_PATCH_CVE_2014_2851
 	group_info = get_current_groups();
 	count = group_info->ngroups;
-#endif /* CONFIG_LGU_DS_SECURITY_PATCH_CVE_2014_2851 */
+#endif /* CONFIG_SKY_DS_ANDROID_SECURITY_PATCH_CVE_2014_2851 */
 
 	for (i = 0; i < group_info->nblocks; i++) {
 		int cp_count = min_t(int, NGROUPS_PER_BLOCK, count);
@@ -271,25 +272,27 @@ int ping_init_sock(struct sock *sk)
 		for (j = 0; j < cp_count; j++) {
 			group = group_info->blocks[i][j];
 			if (range[0] <= group && group <= range[1])
-#ifdef CONFIG_LGU_DS_SECURITY_PATCH_CVE_2014_2851
-				goto out_release_group;
-#else
+#ifndef CONFIG_SKY_DS_ANDROID_SECURITY_PATCH_CVE_2014_2851
 				return 0;
-#endif /* CONFIG_LGU_DS_SECURITY_PATCH_CVE_2014_2851 */			
+#else
+				goto out_release_group;
+#endif /* CONFIG_SKY_DS_ANDROID_SECURITY_PATCH_CVE_2014_2851 */
+
 		}
 
 		count -= cp_count;
 	}
-	
-#ifdef CONFIG_LGU_DS_SECURITY_PATCH_CVE_2014_2851
+
+#ifndef CONFIG_SKY_DS_ANDROID_SECURITY_PATCH_CVE_2014_2851
+	return -EACCES;
+#else
 	ret = -EACCES;
 
 out_release_group:
 	put_group_info(group_info);
 	return ret;
-#else
-	return -EACCES;
-#endif /* CONFIG_LGU_DS_SECURITY_PATCH_CVE_2014_2851 */	
+#endif /* CONFIG_SKY_DS_ANDROID_SECURITY_PATCH_CVE_2014_2851 */
+
 }
 EXPORT_SYMBOL_GPL(ping_init_sock);
 
@@ -901,24 +904,16 @@ int ping_recvmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
 	/* Copy the address and add cmsg data. */
 	if (family == AF_INET) {
 		sin = (struct sockaddr_in *) msg->msg_name;
-#ifndef CONFIG_LGU_DS_PREVENT_NULL_MSG_NAME
+#ifdef CONFIG_SKY_DS_KERNEL_CRASH_DUT_TO_NULL_POINTER      
+		if (sin) {
+#endif /* CONFIG_SKY_DS_KERNEL_CRASH_DUT_TO_NULL_POINTER */
 		sin->sin_family = AF_INET;
 		sin->sin_port = 0 /* skb->h.uh->source */;
 		sin->sin_addr.s_addr = ip_hdr(skb)->saddr;
 		memset(sin->sin_zero, 0, sizeof(sin->sin_zero));
-
-    //CONFIG_LGU_DS_PREVENT_NULL_MSG_NAME : add!!
-    *addr_len = sizeof(*sin);
-#else /* CONFIG_LGU_DS_PREVENT_NULL_MSG_NAME */
-    if (sin) {
-      sin->sin_family = AF_INET;
-      sin->sin_port = 0 /* skb->h.uh->source */;
-      sin->sin_addr.s_addr = ip_hdr(skb)->saddr;
-      memset(sin->sin_zero, 0, sizeof(sin->sin_zero));
-      *addr_len = sizeof(*sin);
-    }
-#endif /* CONFIG_LGU_DS_PREVENT_NULL_MSG_NAME */
-
+#ifdef CONFIG_SKY_DS_KERNEL_CRASH_DUT_TO_NULL_POINTER    
+		}
+#endif /* CONFIG_SKY_DS_KERNEL_CRASH_DUT_TO_NULL_POINTER */
 		if (isk->cmsg_flags)
 			ip_cmsg_recv(msg, skb);
 
@@ -927,27 +922,12 @@ int ping_recvmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
 		struct ipv6_pinfo *np = inet6_sk(sk);
 		struct ipv6hdr *ip6 = ipv6_hdr(skb);
 		sin6 = (struct sockaddr_in6 *) msg->msg_name;
-#ifndef CONFIG_LGU_DS_PREVENT_NULL_MSG_NAME    
+#ifdef CONFIG_SKY_DS_KERNEL_CRASH_DUT_TO_NULL_POINTER           
+		if (sin6) {
+#endif /* CONFIG_SKY_DS_KERNEL_CRASH_DUT_TO_NULL_POINTER */
 		sin6->sin6_family = AF_INET6;
 		sin6->sin6_port = 0;
 		sin6->sin6_addr = ip6->saddr;
-
-    //CONFIG_LGU_DS_PREVENT_NULL_MSG_NAME : add!!
-    *addr_len = sizeof(*sin6);
-#else /* CONFIG_LGU_DS_PREVENT_NULL_MSG_NAME */
-		if (sin6) {
-			sin6->sin6_family = AF_INET6;
-			sin6->sin6_port = 0;
-			sin6->sin6_addr = ip6->saddr;
-			sin6->sin6_flowinfo = 0;
-			if (np->sndflow)
-				sin6->sin6_flowinfo = ip6_flowinfo(ip6);
-			sin6->sin6_scope_id =
-				ipv6_iface_scope_id(&sin6->sin6_addr,
-						                IP6CB(skb)->iif);
-			*addr_len = sizeof(*sin6);
-		}
-#endif /* CONFIG_LGU_DS_PREVENT_NULL_MSG_NAME */
 
 		if (np->sndflow)
 			sin6->sin6_flowinfo =
@@ -956,7 +936,9 @@ int ping_recvmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
 		if (__ipv6_addr_needs_scope_id(
 		    ipv6_addr_type(&sin6->sin6_addr)))
 			sin6->sin6_scope_id = IP6CB(skb)->iif;
-
+#ifdef CONFIG_SKY_DS_KERNEL_CRASH_DUT_TO_NULL_POINTER           
+		}
+#endif /* CONFIG_SKY_DS_KERNEL_CRASH_DUT_TO_NULL_POINTER */
 		if (inet6_sk(sk)->rxopt.all)
 			pingv6_ops.datagram_recv_ctl(sk, msg, skb);
 #endif

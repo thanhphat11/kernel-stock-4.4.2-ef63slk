@@ -369,6 +369,9 @@ config PANTECH_SELINUX_DENIAL_LOG
 	default y
 endif
 
+config PANTECH_SELINUX_PERMISSIVE_LOG
+	bool     
+	default n
 
 config PANTECH_PS_WIFI_COM_PREF_LOGGING
 	depends on WCNSS_CORE

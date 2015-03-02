@@ -216,13 +216,16 @@ USE the format "FEATURE_SKY_WIFI_XXXX"
 //define vendor in wifi_sim_mobility.c       #define FEATURE_PS_WIFI_STA_REQ_AUTO_RETRY_AFTER_CONNECTION_FAIL_KT
 
 /* KT Spec requires mnc length 2.
-IMSI = 450081030101234  б╦во 0450081030101234@wlan.mnc008.mcc450.3gppnetwork.org */
+IMSI = 450081030101234  ┬в┬б 0450081030101234@wlan.mnc008.mcc450.3gppnetwork.org */
 #define FEATURE_PS_WIFI_STA_BUGFIX_EAPAKA_HANDLE_MNC_LENGTH_PROBLEM
 //define vendor in wifi_sim_mobility.c       #define FEATURE_PS_WIFI_STA_BUGFIX_EAPAKA_HANDLE_MNC_LENGTH_PROBLEM_KT
 
 /* 5Ghz Priority Connection */
 #define FEATURE_PS_WIFI_STA_REQ_KT_5GHZ_PRIORITY_CONNECTION   
 //define vendor in wifi_sim_mobility.c       #define FEATURE_PS_WIFI_STA_REQ_KT_5GHZ_PRIORITY_CONNECTION_KT
+
+/* KT Spec, 802.11 AC preferred, 141105, seoyoungsik */
+#define FEATURE_PS_WIFI_STA_REQ_KT_80211AC_PREFERRED
 
 /* When WPS is connecting, do not try connect to ollehWiFi */
 #define FEATURE_PS_WIFI_STA_BUGFIX_WPS_CONNECTION
@@ -302,6 +305,10 @@ IMSI = 450081030101234  б╦во 0450081030101234@wlan.mnc008.mcc450.3gppnetwork.org
 /* enhance common passpoint operation */
 #ifndef FEATURE_PS_WIFI_FOR_CERTIFICATION       
 #define FEATURE_PS_WIFI_STA_PERF_PASSPOINT
+#define FEATRUE_PS_WIFI_STA_REQ_HS20_BSS_STATUS
+#define FEATURE_PS_WIFI_STA_PASSPOINT_FOR_TEMP_NETWORK
+#define FEATURE_PS_WIFI_STA_PASSPOINT_CALCULATION_SKT_CAPACITY
+#define FEATURE_PS_WIFI_STA_PASSPOINT_CHECK_VENDOR_SPECIFIC
 #endif //FEATURE_PS_WIFI_FOR_CERTIFICATION
 
 #define FEATURE_PS_WIFI_STA_ADDON_CHECK_POOR_INTERNET_CONNECTION
@@ -379,6 +386,12 @@ IMSI = 450081030101234  б╦во 0450081030101234@wlan.mnc008.mcc450.3gppnetwork.org
 /* block to store p2p persistent group */
 #define FEATURE_PS_P2P_PERF_BLOCK_STORE_PERSISTENT_GROUP
 
+/* ADD EAP ANNONYMOUSE ID CHECK*/
+#define FEATURE_PS_WIFI_STA_PERF_EAP_ANNONYMOUS_ID_FIX
+
+/* ADD_EAP_4WAY_HANDSAKE_OS_SLEEP_10ms*/
+#define FEATURE_PS_WIFI_STA_PERF_ADD_OS_SLEEP
+
 //======================================================[ MOBILE HOTSPOT ]
 /* Hotspot auto channel config */
 #define FEATURE_PS_WIFI_MHS_BUGFIX_AUTO_CHANNEL_CONFIG
@@ -454,8 +467,8 @@ IMSI = 450081030101234  б╦во 0450081030101234@wlan.mnc008.mcc450.3gppnetwork.org
 // MACRO for FEATURE CHECK ( replacement of #ifdef )
 // ARG1(table) should be an array of feature table.
 #define CHECK_FEATURE(table,feature,vendor)                       ((vendor==VENDORINFO_SKT) ?   ((table)[_##feature] & VENDORINFO_SKT) : \
-	                                                               (vendor==VENDORINFO_KT) ?    ((table)[_##feature] & VENDORINFO_KT ) : \
-	                                                               (vendor==VENDORINFO_LGU) ?   ((table)[_##feature] & VENDORINFO_LGU) : \
+	                                                              (vendor==VENDORINFO_KT) ?    ((table)[_##feature] & VENDORINFO_KT ) : \
+	                                                              (vendor==VENDORINFO_LGU) ?   ((table)[_##feature] & VENDORINFO_LGU) : \
 	                                                               (vendor==VENDORINFO_OTHERS) ? ((table)[_##feature] & VENDORINFO_OTHERS) : 0)
 	                                                                                              
 	                                                              
@@ -470,8 +483,8 @@ IMSI = 450081030101234  б╦во 0450081030101234@wlan.mnc008.mcc450.3gppnetwork.org
 // MACRO for FEATURE CHECK ( replacement of #ifndef )	                                                                                                                                    
 // ARG1(table) should be an array of feature table. 
 #define NCHECK_FEATURE(table,feature,vendor)                      ((vendor==VENDORINFO_SKT) ?   (((table)[_##feature] & VENDORINFO_SKT)==0) : \
-	                                                               (vendor==VENDORINFO_KT) ?    (((table)[_##feature] & VENDORINFO_KT )==0) : \
-	                                                               (vendor==VENDORINFO_LGU) ?   (((table)[_##feature] & VENDORINFO_LGU)==0) : \
+	                                                              (vendor==VENDORINFO_KT) ?    (((table)[_##feature] & VENDORINFO_KT )==0) : \
+	                                                              (vendor==VENDORINFO_LGU) ?   (((table)[_##feature] & VENDORINFO_LGU)==0) : \
 	                                                               (vendor==VENDORINFO_OTHERS) ? (((table)[_##feature] & VENDORINFO_OTHERS)==0) : 0)
 #if 0
 #define NCHECK_FEATURE(table,feature,vendor)                      ((vendor==VENDORINFO_SKT) ? ( ((table)[_##feature##_SKT] == WFLAG_ND) ? (table)[_##feature] != WFLAG_ON : (table)[_##feature##_SKT] != WFLAG_ON ) : \
@@ -482,8 +495,8 @@ IMSI = 450081030101234  б╦во 0450081030101234@wlan.mnc008.mcc450.3gppnetwork.org
 // MACRO for FEATURE CHECK ( replacement of #ifdef )
 // ARG1(table_p) should be a pointer of feature table.
 #define CHECK_FEATURE_P(table_p,feature,vendor)                    ((vendor==VENDORINFO_SKT) ?  (*(table_p + _##feature) & VENDORINFO_SKT) : \
-	                                                                (vendor==VENDORINFO_KT) ?   (*(table_p + _##feature) & VENDORINFO_KT ) : \
-	                                                                (vendor==VENDORINFO_LGU) ?  (*(table_p + _##feature) & VENDORINFO_LGU) : \
+	                                                               (vendor==VENDORINFO_KT) ?   (*(table_p + _##feature) & VENDORINFO_KT ) : \
+	                                                               (vendor==VENDORINFO_LGU) ?  (*(table_p + _##feature) & VENDORINFO_LGU) : \
 	                                                                (vendor==VENDORINFO_OTHERS) ? (*(table_p + _##feature) & VENDORINFO_OTHERS) : 0)
 
 #if 0

@@ -22,7 +22,9 @@
 
 //---------------------------------------------------
 // PS1 Team add
-//#define FEATURE_SKY_CP_ADB_LOG_FOR_VITAMIN
+/*
+#define FEATURE_SKY_CP_ADB_LOG_FOR_VITAMIN
+*/
 //--------------------------------------------------
 
 /*

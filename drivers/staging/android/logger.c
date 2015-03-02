@@ -780,11 +780,6 @@ DEFINE_LOGGER_DEVICE(log_wifi, LOGGER_LOG_WIFI, CONFIG_WIFI_LOGCAT_SIZE*1024)
 DEFINE_LOGGER_DEVICE(log_wqe, LOGGER_LOG_WQE, CONFIG_WQE_LOGCAT_SIZE*1024)
 #endif
 
-
-#ifdef FEATURE_SKY_CP_ADB_LOG_FOR_VITAMIN
-DEFINE_LOGGER_DEVICE(log_vitamin, LOGGER_LOG_VITAMIN, 256*1024)
-#endif
-
 static struct logger_log *get_log_from_minor(int minor)
 {
 	if (log_main.misc.minor == minor)
@@ -803,14 +798,6 @@ static struct logger_log *get_log_from_minor(int minor)
 	if (log_wqe.misc.minor == minor)
 		return &log_wqe;
 #endif	
-	
-	
-
-#ifdef FEATURE_SKY_CP_ADB_LOG_FOR_VITAMIN
-	if (log_vitamin.misc.minor == minor)
-		return &log_vitamin;
-#endif
-		
 	return NULL;
 }
 
@@ -883,12 +870,6 @@ static int __init logger_init(void)
 	if (unlikely(ret))
 		goto out;
 #endif
-
-#ifdef FEATURE_SKY_CP_ADB_LOG_FOR_VITAMIN
-  ret = init_log(&log_vitamin);
-	if (unlikely(ret))
-		goto out;  
-#endif		
 
 out:
 	return ret;

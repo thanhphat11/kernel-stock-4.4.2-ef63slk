@@ -49,9 +49,32 @@
 #include <linux/syscalls.h>
 #include <linux/kmod.h>
 #include <linux/workqueue.h>
-#include "sky_rawdata.h"
-#include "pantech_ssrsystem.h"
+//#include "../../../../vendor/pantech/frameworks/testmenu_server/inc/pantech_ssrsystem.h"
 #endif
+
+typedef struct {
+    unsigned int ssr_info_start_magic_num;
+    unsigned int ssr_set_modem_disable;
+    unsigned int ssr_set_modem_dump_enable;
+    unsigned int ssr_set_notification_enable;
+    unsigned int ssr_cnt_lpass;
+    unsigned int ssr_cnt_dsps;
+    unsigned int ssr_cnt_wcnss;
+    unsigned int ssr_cnt_venus;
+    unsigned int ssr_cnt_modem;
+    unsigned int ssr_cnt_mdm;
+    unsigned int ssr_info_end_magic_num;
+} sky_ssr_info_type;
+#define SECTOR_SIZE                     512
+#define SSR_INFO_START_MAGIC_NUM        0xDEADDEAD
+#define SSR_INFO_END_MAGIC_NUM          0xEFBEEFBE
+
+#define SSR_SET_MODEM_CHECK(b)          ((unsigned int)1 == b->ssr_set_modem_disable)
+#define SSR_SET_MODEM_DUMP_CHECK(b)     ((unsigned int)1 == b->ssr_set_modem_dump_enable)
+#define SSR_SET_MODEM_DISABLE(b)        (b->ssr_set_modem_disable = (unsigned int)1)
+#define SSR_SET_MODEM_ENABLE(b)         (b->ssr_set_modem_disable = (unsigned int)0)
+#define SSR_SET_MODEM_DUMP_ENABLE(b)    (b->ssr_set_modem_dump_enable = (unsigned int)1)
+#define SSR_SET_MODEM_DUMP_DISABLE(b)   (b->ssr_set_modem_dump_enable = (unsigned int)0)
 
 // p15060
 #ifdef CONFIG_PANTECH_ERR_CRASH_LOGGING
@@ -874,11 +897,11 @@ int rawdata_read_func(unsigned int offset, unsigned int read_size, char* read_bu
 
 void check_ssr_setting_func( void )
 {
-    unsigned char backup_buffer[SECTOR_SIZE];
+    unsigned char backup_buffer[512];
     sky_ssr_info_type *ssrinfo = NULL;
     
     memset( backup_buffer, 0, sizeof(backup_buffer) );
-    if( rawdata_read_func(SSR_SETTING_BACKUP_START, sizeof(backup_buffer), backup_buffer) >= 0 )
+    if( rawdata_read_func(402432, sizeof(backup_buffer), backup_buffer) >= 0 )
     {
         ssrinfo = (sky_ssr_info_type *)backup_buffer;
 
@@ -1106,6 +1129,7 @@ int subsystem_restart_dev(struct subsys_device *dev)
 
 	return 0;
 }
+
 EXPORT_SYMBOL(subsystem_restart_dev);
 
 int subsystem_restart(const char *name)

@@ -64,7 +64,9 @@ enum tsp_power_pin_type {
 	POWER_NOT_USED=0,
 	POWER_GPIO_SETUP,	// gpio setup
 	POWER_PM_REGULATOR,	// PMIC regulator setup
+	
 };
+
 
 enum gpio_direction {	
 	GPIO_OUTPUT_LOW=0,	// out port, default low
@@ -236,7 +238,7 @@ void fts_stylus_mode_onoff(struct fts_ts_info *info, unsigned char onoff)
 		regAdd[3] = 0x54;                    // set lower 1 byte value(0x54)
 		fts_write_reg(info, regAdd, 4);
 		regAdd[2] = 0x63;                    // set higher address
-		regAdd[3] = 0x01;                    // set upper 1 byte value.(0x0154 =340)
+		regAdd[3] = 0x01;                    // set upper 1 byte value.(0x0154 = 340)
 		fts_write_reg(info, regAdd, 4);
 	}
 

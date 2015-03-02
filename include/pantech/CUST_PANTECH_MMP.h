@@ -92,7 +92,7 @@
   frameworks/base/media/libstagefright/Android.mk. (remove 
   BUILD_WITH_WMA_SW_DECODER:=true)
   ************************************************************************/
- //#define FEATURE_PANTECH_MMP_HOPPIN
+ #define FEATURE_PANTECH_MMP_HOPPIN
 
  /************************************************************************
  Who Added it And Why??
@@ -372,6 +372,13 @@
   ...description...
 ************************************************************************/ 
 #define FEATURE_PANTECH_MMP_xxx
+
+/************************************************************************
+  - 2012/10/17 KYJ  P10588
+  - FEATURE_PANTECH_MMP_SKT_HLS
+  - It can be supported HLS streaming with url that not includs m3u8 for SKT HLS service.
+************************************************************************/
+#define FEATURE_PANTECH_MMP_SKT_HLS
 
 /************************************************************************
 -  Caution !!

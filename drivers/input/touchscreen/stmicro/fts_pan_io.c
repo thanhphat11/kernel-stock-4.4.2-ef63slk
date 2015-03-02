@@ -88,6 +88,7 @@ extern char* touch_error_info;
 extern int pan_debug_state;
 
 
+
 struct pan_io_data {
 	int vendor_id;
 	int model_id;

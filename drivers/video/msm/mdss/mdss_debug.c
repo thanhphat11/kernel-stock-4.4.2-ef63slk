@@ -436,7 +436,7 @@ static ssize_t mdss_debug_gamma_read(struct file *file, char __user *buff,
 	panel_pdata = container_of(mdata->ctl_off->panel_data, struct mdss_dsi_ctrl_pdata,panel_data);
 	if(panel_pdata-> manufacture_id == SAMSUNG_DRIVER_IC)
 		memcpy(Base_gamma_array,gamma_level_lsi,sizeof(gamma_level_lsi));
-		
+	
 	tot = scnprintf(bp, len, "\nGamma: %d\n",Base_gamma_array[mdata->ctl_off->mfd->bl_level]);
 	
 

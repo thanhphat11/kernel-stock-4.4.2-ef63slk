@@ -62,6 +62,7 @@
 #define TOUCH_BOOSTER_INT_FRQ_3		160000	/* INT 160MHz */
 #endif
 
+
 #define FIRMWARE_IC					"fts_ic"
 
 #define FTS_MAX_FW_PATH	64

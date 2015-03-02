@@ -235,6 +235,11 @@
 ******************************************************/
 #define CONFIG_F_SKYDISP_DO_NOT_INCREASE_DECIMATOR_WB_PANEL
 
+//+US1-CF1
+//Google Patches (HWUI , GUI, UI)
+#define FEATURE_HWUI_GUI_GOOGLE_PATCHES
+//-US1-CF1
+
  /*****************************************************
 * owner  : p13832      
 * date    : 2014.06.11

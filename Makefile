@@ -1,7 +1,7 @@
 VERSION = 3
 PATCHLEVEL = 4
-SUBLEVEL = 4
-EXTRAVERSION =7
+SUBLEVEL = 0
+EXTRAVERSION =
 NAME = Saber-toothed Squirrel
 
 # *DOCUMENTATION*
@@ -373,10 +373,10 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -Werror-implicit-function-declaration \
 		   -Wno-format-security \
 		   -fno-delete-null-pointer-checks
-#// 20120105, albatros, imei 
-#ifeq ($(OEM_PRODUCT_MANUFACTURER),PANTECH)
+#// 20120105, albatros, imei 주소값의 공용으로 사용을 위해서
+
 LINUXINCLUDE += -I$(srctree)/include/pantech
-#endif
+
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=
 KBUILD_AFLAGS   := -D__ASSEMBLY__
@@ -388,11 +388,11 @@ KBUILD_LDFLAGS_MODULE := -T $(srctree)/scripts/module-common.lds
 ######################################################################
 # PANTECH_KERNEL_FLAGS
 ######################################################################
-#ifeq ($(OEM_PRODUCT_MANUFACTURER),PANTECH)
+
 PANTECH_BUILD_SYSTEM := $(srctree)/include/pantech
 include $(PANTECH_BUILD_SYSTEM)/pantech_config.mk
 KBUILD_CFLAGS += $(PANTECH_KERNEL_FLAGS)
-#endif
+
 # Read KERNELRELEASE from include/config/kernel.release (if it exists)
 KERNELRELEASE = $(shell cat include/config/kernel.release 2> /dev/null)
 KERNELVERSION = $(VERSION)$(if $(PATCHLEVEL),.$(PATCHLEVEL)$(if $(SUBLEVEL),.$(SUBLEVEL)))$(EXTRAVERSION)

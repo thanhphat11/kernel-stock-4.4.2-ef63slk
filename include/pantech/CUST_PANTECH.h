@@ -80,11 +80,16 @@
 /*******************************************************************************
 **  SENSOR LS2
 *******************************************************************************/
-#include "CUST_PANTECH_SENSOR.h"  
+#include "CUST_PANTECH_SENSOR.h"
 /*******************************************************************************
 **  Display
 *******************************************************************************/
 #include "CUST_PANTECH_DISPLAY.h"
+
+/*******************************************************************************
+**  p12455 - FEATURE_PANTECH_MUSIC_DRM & FEATURE_PANTECH_HOPPIN_DRM
+*******************************************************************************/
+#include "CUST_PANTECH_DRM.h"
 
 /*******************************************************************************
 **  PMIC
@@ -106,7 +111,7 @@
 #define FEATURE_PANTECH_DLOAD_USB
 #define FEATURE_PANTECH_REBOOT_FOR_IDLE_DL
 #define FEATURE_PANTECH_GOTA_BACKUP_CODE
-#define FEATURE_PANTECH_GPT_RECOVERY     
+#define FEATURE_PANTECH_GPT_RECOVERY
 
 /* All MSM8974 model support */
 #define FEATURE_SKY_MDM_PREVENT_UPGRADE
@@ -133,14 +138,9 @@
 **  Display
 *******************************************************************************/
 #include "CUST_PANTECH_DISPLAY.h"
- 
+
 
 #endif
-
-/*******************************************************************************
-** DATA
-*******************************************************************************/
-#include "cust_pantech_data_linux.h"
 
 /*******************************************************************************
 **  EXT4 (repair /data partition)  manual, auto repair
@@ -171,6 +171,8 @@
 #define FEATURE_PANTECH_BLUETOOTH_BLUEDROID
 
 #define FEATURE_PANTECH_BLUETOOTH_A2DP_ENABLED	// 20140121 pooyi check A2DP connected and play state.
+
+#define FEATURE_PANTECH_BLUETOOTH_QCOM_CR               /* 20141106 : youngbi@LS4 : Qualcomm CR patch feature */
 
 #if defined(T_EF56S) || defined(T_EF59S) || defined(T_EF59K) || defined(T_EF59L) || defined(T_EF60S) || defined(T_EF65S) || defined(T_EF61K) || defined(T_EF62L) || defined(T_EF63S) || defined(T_EF63K) || defined(T_EF63L)  
 #define FEATURE_PANTECH_BLUETOOTH_AVRCP_1_3 /* Use AVRCP 1.3 instead of 1.5  *//*We do not use 'BTRC_FEAT_ABSOLUTE_VOLUME' feature at AVRCP 1.3 *//*remote control Advanced Control command/response*/
@@ -325,7 +327,7 @@
 #endif
 
 /*******************************************************************************
-** UICC NO Power Down when going to LPM 
+** UICC NO Power Down when going to LPM
 *******************************************************************************/
 #if defined(T_NAMI)
 #define FEATURE_PANTECH_MMGSDI_CARD_NOT_POWER_DOWN
@@ -377,7 +379,7 @@
 /******************************************************************************
 ** Preload:Sample Content
 ******************************************************************************/
-//p13156@lks 
+//p13156@lks
 #define FEATURE_PANTECH_PRELOAD_SAMPLE_CONTENT
 /*******************************************************************************
 **  WIFI
@@ -388,7 +390,7 @@
 **  SELinux
 ******************************************************************************/
 #if defined(T_EF63S) || defined(T_EF63K) || defined(T_EF63L) || defined(T_EF65S) || defined(T_EF65K) || defined(T_EF65L)
-#define FEATURE_PANTECH_SELINUX_DENIAL_LOG //P11536-SHPARK-SELinux 
+#define FEATURE_PANTECH_SELINUX_DENIAL_LOG //P11536-SHPARK-SELinux
 #endif
 
 /******************************************************************************
@@ -399,14 +401,19 @@
 **  Power On/Off Test (auto booting on offline charging mode)
 ******************************************************************************/
 //#define FEATURE_PANTECH_POWER_ONOFF
-
 /*******************************************************************************
 **  Call PROTOCOL
 *******************************************************************************/
-/* 2013-04-10 octopusy added  [PS1/2 Team Feature] */
+/* 2013-03-07 octopusy added  [PS1 Team Feature] */
 #ifdef T_SKY_MODEL_TARGET_COMMON
-#include "cust_lgu_cp_linux.h"
+#include "cust_sky_cp_linux.h"
 #endif/* T_SKY_MODEL_TARGET_COMMON */
+
+/*******************************************************************************
+**  DATA PROTOCOL
+*******************************************************************************/
+
+#include "cust_sky_ds_linux.h"
 
 //+US1-CF1
 //Feature : FW_VENDOR_FOR_AOT_VIDEO_APP
@@ -419,10 +426,6 @@
 ** P10646 Leejungwoon
 ******************************************************************************/
 #define FEATURE_PANTECH_FINGERPRINT_BUMPER_CASE
-
-// p13040 ++ [DS4] for DRM
-#include "CUST_PANTECH_DRM.h"
-// p13040 -- [DS4] for DRM
 
 /*******************************************************************************
 **  IMS PROTOCOL - UI VOB Only

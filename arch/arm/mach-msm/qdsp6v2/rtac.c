@@ -11,19 +11,19 @@
  *
  */
 
-#include "linux/fs.h"
-#include "linux/module.h"
-#include "linux/miscdevice.h"
-#include "linux/slab.h"
-#include "linux/uaccess.h"
-#include "linux/mutex.h"
-#include "linux/sched.h"
-#include "linux/msm_audio_acdb.h"
-#include "asm/atomic.h"
-#include "mach/qdsp6v2/audio_acdb.h"
-#include "mach/qdsp6v2/rtac.h"
+#include <linux/fs.h>
+#include <linux/module.h>
+#include <linux/miscdevice.h>
+#include <linux/slab.h>
+#include <linux/uaccess.h>
+#include <linux/mutex.h>
+#include <linux/sched.h>
+#include <linux/msm_audio_acdb.h>
+#include <asm/atomic.h>
+#include <mach/qdsp6v2/audio_acdb.h>
+#include <mach/qdsp6v2/rtac.h>
 #include "q6audio_common.h"
-#include "sound/q6afe.h"
+#include <sound/q6afe.h>
 
 #ifndef CONFIG_RTAC
 

@@ -1464,7 +1464,7 @@ void mdss_dsi_error(struct mdss_dsi_ctrl_pdata *ctrl)
 	mdss_dsi_dln0_phy_err(ctrl);	/* mask0, 0x3e00000 */
 
 	dsi_send_events(ctrl, DSI_EV_MDP_BUSY_RELEASE);
-}
+	}
 
 irqreturn_t mdss_dsi_isr(int irq, void *ptr)
 {
