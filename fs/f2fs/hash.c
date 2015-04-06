@@ -70,25 +70,14 @@ static void str2hashbuf(const unsigned char *msg, size_t len,
 		*buf++ = pad;
 }
 
-<<<<<<< HEAD
-f2fs_hash_t f2fs_dentry_hash(const char *name, size_t len)
-=======
 f2fs_hash_t f2fs_dentry_hash(const struct qstr *name_info)
->>>>>>> 2f842f1... fs: add support for f2fs
 {
 	__u32 hash;
 	f2fs_hash_t f2fs_hash;
 	const unsigned char *p;
 	__u32 in[8], buf[4];
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-	const char *name = name_info->name;
-=======
 	const unsigned char *name = name_info->name;
->>>>>>> 19c62e3... f2fs: fix wrong casting for dentry name
 	size_t len = name_info->len;
->>>>>>> 2f842f1... fs: add support for f2fs
 
 	if ((len <= 2) && (name[0] == '.') &&
 		(name[1] == '.' || name[1] == '\0'))

@@ -693,6 +693,7 @@ int truncate_xattr_node(struct inode *inode, struct page *page)
 
 	if (page)
 		dn.inode_page_locked = true;
+	truncate_node(&dn);
 	return 0;
 }
 
@@ -721,6 +722,8 @@ void remove_inode_page(struct inode *inode)
 	/* 0 is possible, after f2fs_new_inode() has failed */
 	f2fs_bug_on(inode->i_blocks != 0 && inode->i_blocks != 1);
 
+	/* will put inode & node pages */
+	truncate_node(&dn);
 }
 
 struct page *new_inode_page(struct inode *inode)

@@ -14,11 +14,7 @@
 #define NULL_SEGNO			((unsigned int)(~0))
 #define NULL_SECNO			((unsigned int)(~0))
 
-<<<<<<< HEAD
-#define DEF_RECLAIM_PREFREE_SEGMENTS	100	/* 200MB of prefree segments */
-=======
 #define DEF_RECLAIM_PREFREE_SEGMENTS	5	/* 5% over total segments */
->>>>>>> 2f842f1... fs: add support for f2fs
 
 /* L: Logical segment # in volume, R: Relative segment # in main area */
 #define GET_L2R_SEGNO(free_i, segno)	(segno - free_i->start_segno)
@@ -61,12 +57,9 @@
 	((blk_addr) - SM_I(sbi)->seg0_blkaddr)
 #define GET_SEGNO_FROM_SEG0(sbi, blk_addr)				\
 	(GET_SEGOFF_FROM_SEG0(sbi, blk_addr) >> sbi->log_blocks_per_seg)
-<<<<<<< HEAD
-=======
 #define GET_BLKOFF_FROM_SEG0(sbi, blk_addr)				\
 	(GET_SEGOFF_FROM_SEG0(sbi, blk_addr) & (sbi->blocks_per_seg - 1))
 
->>>>>>> 2f842f1... fs: add support for f2fs
 #define GET_SEGNO(sbi, blk_addr)					\
 	(((blk_addr == NULL_ADDR) || (blk_addr == NEW_ADDR)) ?		\
 	NULL_SEGNO : GET_L2R_SEGNO(FREE_I(sbi),			\
@@ -387,34 +380,12 @@ static inline void get_sit_bitmap(struct f2fs_sb_info *sbi,
 
 static inline block_t written_block_count(struct f2fs_sb_info *sbi)
 {
-<<<<<<< HEAD
-	struct sit_info *sit_i = SIT_I(sbi);
-	block_t vblocks;
-
-	mutex_lock(&sit_i->sentry_lock);
-	vblocks = sit_i->written_valid_blocks;
-	mutex_unlock(&sit_i->sentry_lock);
-
-	return vblocks;
-=======
 	return SIT_I(sbi)->written_valid_blocks;
->>>>>>> 2f842f1... fs: add support for f2fs
 }
 
 static inline unsigned int free_segments(struct f2fs_sb_info *sbi)
 {
-<<<<<<< HEAD
-	struct free_segmap_info *free_i = FREE_I(sbi);
-	unsigned int free_segs;
-
-	read_lock(&free_i->segmap_lock);
-	free_segs = free_i->free_segments;
-	read_unlock(&free_i->segmap_lock);
-
-	return free_segs;
-=======
 	return FREE_I(sbi)->free_segments;
->>>>>>> 2f842f1... fs: add support for f2fs
 }
 
 static inline int reserved_segments(struct f2fs_sb_info *sbi)
@@ -424,18 +395,7 @@ static inline int reserved_segments(struct f2fs_sb_info *sbi)
 
 static inline unsigned int free_sections(struct f2fs_sb_info *sbi)
 {
-<<<<<<< HEAD
-	struct free_segmap_info *free_i = FREE_I(sbi);
-	unsigned int free_secs;
-
-	read_lock(&free_i->segmap_lock);
-	free_secs = free_i->free_sections;
-	read_unlock(&free_i->segmap_lock);
-
-	return free_secs;
-=======
 	return FREE_I(sbi)->free_sections;
->>>>>>> 2f842f1... fs: add support for f2fs
 }
 
 static inline unsigned int prefree_segments(struct f2fs_sb_info *sbi)
@@ -708,8 +668,6 @@ static inline unsigned int max_hw_blocks(struct f2fs_sb_info *sbi)
 	struct request_queue *q = bdev_get_queue(bdev);
 	return SECTOR_TO_BLOCK(sbi, queue_max_sectors(q));
 }
-<<<<<<< HEAD
-=======
 
 /*
  * It is very important to gather dirty pages and write at once, so that we can
@@ -753,4 +711,3 @@ static inline long nr_pages_to_write(struct f2fs_sb_info *sbi, int type,
 	wbc->nr_to_write = desired;
 	return desired - nr_to_write;
 }
->>>>>>> 2f842f1... fs: add support for f2fs

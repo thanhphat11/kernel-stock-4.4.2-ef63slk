@@ -386,11 +386,6 @@ void update_extent_cache(block_t blk_addr, struct dnode_of_data *dn)
 		set_inode_flag(fi, FI_NO_EXTENT);
 		need_update = true;
 	}
-end_update:
-	write_unlock(&fi->ext.ext_lock);
-	if (need_update)
-	return;
-}
 
 struct page *find_data_page(struct inode *inode, pgoff_t index, bool sync)
 {
@@ -662,12 +657,7 @@ static int __get_data_block(struct inode *inode, sector_t iblock,
 
 get_next:
 	if (dn.ofs_in_node >= end_offset) {
-		if (allocated)
-		allocated = false;
-		f2fs_put_dnode(&dn);
 
-		set_new_dnode(&dn, inode, NULL, NULL, 0);
-		err = get_dnode_of_data(&dn, pgofs, mode);
 		if (err) {
 			if (err == -ENOENT)
 				err = 0;
@@ -697,8 +687,7 @@ get_next:
 			goto get_next;
 		}
 	}
-sync_out:
-	if (allocated)
+
 put_out:
 	f2fs_put_dnode(&dn);
 unlock_out:

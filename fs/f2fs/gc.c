@@ -45,14 +45,11 @@ static int gc_thread_func(void *data)
 		if (kthread_should_stop())
 			break;
 
-<<<<<<< HEAD
-=======
 		if (sbi->sb->s_frozen >= SB_FREEZE_WRITE) {
 			wait_ms = increase_sleep_time(gc_th, wait_ms);
 			continue;
 		}
 
->>>>>>> 2f842f1... fs: add support for f2fs
 		/*
 		 * [GC triggering condition]
 		 * 0. GC is not conducted currently.
@@ -531,22 +528,10 @@ static void move_data_page(struct inode *inode, struct page *page, int gc_type)
 		set_page_dirty(page);
 		set_cold_data(page);
 	} else {
-<<<<<<< HEAD
-		struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
-
-		f2fs_wait_on_page_writeback(page, DATA);
-
-		if (clear_page_dirty_for_io(page) &&
-			S_ISDIR(inode->i_mode)) {
-			dec_page_count(sbi, F2FS_DIRTY_DENTS);
-			inode_dec_dirty_dents(inode);
-		}
-=======
 		f2fs_wait_on_page_writeback(page, DATA);
 
 		if (clear_page_dirty_for_io(page))
 			inode_dec_dirty_dents(inode);
->>>>>>> 2f842f1... fs: add support for f2fs
 		set_cold_data(page);
 		do_write_data_page(page, &fio);
 		clear_cold_data(page);
@@ -708,15 +693,8 @@ int f2fs_gc(struct f2fs_sb_info *sbi)
 gc_more:
 	if (unlikely(!(sbi->sb->s_flags & MS_ACTIVE)))
 		goto stop;
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-	if (unlikely(is_set_ckpt_flags(F2FS_CKPT(sbi), CP_ERROR_FLAG)))
-=======
 	if (unlikely(f2fs_cp_error(sbi)))
->>>>>>> 79e7c86... f2fs: introduce f2fs_cp_error for readability
 		goto stop;
->>>>>>> 2f842f1... fs: add support for f2fs
 
 	if (gc_type == BG_GC && has_not_enough_free_secs(sbi, nfree)) {
 		gc_type = FG_GC;
@@ -727,14 +705,11 @@ gc_more:
 		goto stop;
 	ret = 0;
 
-<<<<<<< HEAD
-=======
 	/* readahead multi ssa blocks those have contiguous address */
 	if (sbi->segs_per_sec > 1)
 		ra_meta_pages(sbi, GET_SUM_BLOCK(sbi, segno), sbi->segs_per_sec,
 								META_SSA);
 
->>>>>>> 2f842f1... fs: add support for f2fs
 	for (i = 0; i < sbi->segs_per_sec; i++)
 		do_garbage_collect(sbi, segno + i, &ilist, gc_type);
 
@@ -764,11 +739,7 @@ void build_gc_manager(struct f2fs_sb_info *sbi)
 int __init create_gc_caches(void)
 {
 	winode_slab = f2fs_kmem_cache_create("f2fs_gc_inodes",
-<<<<<<< HEAD
-			sizeof(struct inode_entry), NULL);
-=======
 			sizeof(struct inode_entry));
->>>>>>> 2f842f1... fs: add support for f2fs
 	if (!winode_slab)
 		return -ENOMEM;
 	return 0;
