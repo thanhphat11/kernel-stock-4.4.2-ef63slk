@@ -11,7 +11,6 @@
  *
  */
 
-<<<<<<< HEAD
 #include <linux/fs.h>
 #include <linux/module.h>
 #include <linux/miscdevice.h>
@@ -26,7 +25,6 @@
 #include <sound/q6asm-v2.h>
 #include <sound/q6afe-v2.h>
 #include <sound/apr_audio-v2.h>
-=======
 #include "linux/fs.h"
 #include "linux/module.h"
 #include "linux/miscdevice.h"
@@ -41,7 +39,6 @@
 #include "sound/q6asm-v2.h"
 #include "sound/q6afe-v2.h"
 #include "sound/apr_audio-v2.h"
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 #include "q6voice.h"
 #include "audio_acdb.h"
 

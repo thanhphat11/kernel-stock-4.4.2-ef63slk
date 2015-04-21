@@ -1,13 +1,7 @@
 VERSION = 3
-<<<<<<< HEAD
-PATCHLEVEL = 10
+PATCHLEVEL = 4
 SUBLEVEL = 109
 EXTRAVERSION =
-=======
-PATCHLEVEL = 4
-SUBLEVEL = 4
-EXTRAVERSION =7
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 NAME = Saber-toothed Squirrel
 
 # *DOCUMENTATION*

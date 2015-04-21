@@ -116,11 +116,8 @@ extern const struct xattr_handler f2fs_xattr_security_handler;
 extern const struct xattr_handler *f2fs_xattr_handlers[];
 
 extern int f2fs_setxattr(struct inode *, int, const char *,
-<<<<<<< HEAD
-				const void *, size_t, struct page *, int);
-=======
+
 				const void *, size_t, struct page *);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 extern int f2fs_getxattr(struct inode *, int, const char *, void *, size_t);
 extern ssize_t f2fs_listxattr(struct dentry *, char *, size_t);
 #else
@@ -132,15 +129,13 @@ static inline int f2fs_setxattr(struct inode *inode, int index,
 {
 	return -EOPNOTSUPP;
 }
-static inline int f2fs_getxattr(struct inode *inode, int index,
-=======
+
 static inline int f2fs_setxattr(struct inode *inode, int name_index,
 		const char *name, const void *value, size_t value_len)
 {
 	return -EOPNOTSUPP;
 }
 static inline int f2fs_getxattr(struct inode *inode, int name_index,
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 		const char *name, void *buffer, size_t buffer_size)
 {
 	return -EOPNOTSUPP;

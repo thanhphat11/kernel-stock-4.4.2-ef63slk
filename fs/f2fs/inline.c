@@ -45,15 +45,10 @@ int f2fs_read_inline_data(struct inode *inode, struct page *page)
 	}
 
 	ipage = get_node_page(sbi, inode->i_ino);
-<<<<<<< HEAD
 	if (IS_ERR(ipage)) {
 		unlock_page(page);
 		return PTR_ERR(ipage);
 	}
-=======
-	if (IS_ERR(ipage))
-		return PTR_ERR(ipage);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 
 	zero_user_segment(page, MAX_INLINE_DATA, PAGE_CACHE_SIZE);
 
@@ -73,11 +68,7 @@ out:
 
 static int __f2fs_convert_inline_data(struct inode *inode, struct page *page)
 {
-<<<<<<< HEAD
 	int err = 0;
-=======
-	int err;
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	struct page *ipage;
 	struct dnode_of_data dn;
 	void *src_addr, *dst_addr;
@@ -90,7 +81,6 @@ static int __f2fs_convert_inline_data(struct inode *inode, struct page *page)
 
 	f2fs_lock_op(sbi);
 	ipage = get_node_page(sbi, inode->i_ino);
-<<<<<<< HEAD
 	if (IS_ERR(ipage)) {
 		err = PTR_ERR(ipage);
 		goto out;
@@ -99,10 +89,6 @@ static int __f2fs_convert_inline_data(struct inode *inode, struct page *page)
 	/* someone else converted inline_data already */
 	if (!f2fs_has_inline_data(inode))
 		goto out;
-=======
-	if (IS_ERR(ipage))
-		return PTR_ERR(ipage);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 
 	/*
 	 * i_addr[0] is not used for inline data,
@@ -110,18 +96,10 @@ static int __f2fs_convert_inline_data(struct inode *inode, struct page *page)
 	 */
 	set_new_dnode(&dn, inode, ipage, NULL, 0);
 	err = f2fs_reserve_block(&dn, 0);
-<<<<<<< HEAD
 	if (err)
 		goto out;
 
 	f2fs_wait_on_page_writeback(page, DATA);
-=======
-	if (err) {
-		f2fs_unlock_op(sbi);
-		return err;
-	}
-
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	zero_user_segment(page, MAX_INLINE_DATA, PAGE_CACHE_SIZE);
 
 	/* Copy the whole inline data block */
@@ -143,27 +121,16 @@ static int __f2fs_convert_inline_data(struct inode *inode, struct page *page)
 	clear_inode_flag(F2FS_I(inode), FI_INLINE_DATA);
 	stat_dec_inline_inode(inode);
 
-<<<<<<< HEAD
 	f2fs_put_dnode(&dn);
 out:
-=======
-	sync_inode_page(&dn);
-	f2fs_put_dnode(&dn);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	f2fs_unlock_op(sbi);
 	return err;
 }
 
-<<<<<<< HEAD
 int f2fs_convert_inline_data(struct inode *inode, pgoff_t to_size,
 						struct page *page)
 {
 	struct page *new_page = page;
-=======
-int f2fs_convert_inline_data(struct inode *inode, pgoff_t to_size)
-{
-	struct page *page;
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	int err;
 
 	if (!f2fs_has_inline_data(inode))
@@ -171,7 +138,6 @@ int f2fs_convert_inline_data(struct inode *inode, pgoff_t to_size)
 	else if (to_size <= MAX_INLINE_DATA)
 		return 0;
 
-<<<<<<< HEAD
 	if (!page || page->index != 0) {
 		new_page = grab_cache_page(inode->i_mapping, 0);
 		if (!new_page)
@@ -181,23 +147,11 @@ int f2fs_convert_inline_data(struct inode *inode, pgoff_t to_size)
 	err = __f2fs_convert_inline_data(inode, new_page);
 	if (!page || page->index != 0)
 		f2fs_put_page(new_page, 1);
-=======
-	page = grab_cache_page_write_begin(inode->i_mapping, 0, AOP_FLAG_NOFS);
-	if (!page)
-		return -ENOMEM;
-
-	err = __f2fs_convert_inline_data(inode, page);
-	f2fs_put_page(page, 1);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	return err;
 }
 
 int f2fs_write_inline_data(struct inode *inode,
-<<<<<<< HEAD
 				struct page *page, unsigned size)
-=======
-			   struct page *page, unsigned size)
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 {
 	void *src_addr, *dst_addr;
 	struct page *ipage;
@@ -210,10 +164,7 @@ int f2fs_write_inline_data(struct inode *inode,
 		return err;
 	ipage = dn.inode_page;
 
-<<<<<<< HEAD
 	f2fs_wait_on_page_writeback(ipage, NODE);
-=======
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	zero_user_segment(ipage, INLINE_DATA_OFFSET,
 				 INLINE_DATA_OFFSET + MAX_INLINE_DATA);
 	src_addr = kmap(page);
@@ -228,17 +179,12 @@ int f2fs_write_inline_data(struct inode *inode,
 		stat_inc_inline_inode(inode);
 	}
 
-<<<<<<< HEAD
 	set_inode_flag(F2FS_I(inode), FI_APPEND_WRITE);
-=======
-	sync_inode_page(&dn);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	f2fs_put_dnode(&dn);
 
 	return 0;
 }
 
-<<<<<<< HEAD
 void truncate_inline_data(struct inode *inode, u64 from)
 {
 	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
@@ -260,9 +206,6 @@ void truncate_inline_data(struct inode *inode, u64 from)
 }
 
 bool recover_inline_data(struct inode *inode, struct page *npage)
-=======
-int recover_inline_data(struct inode *inode, struct page *npage)
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 {
 	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
 	struct f2fs_inode *ri = NULL;
@@ -281,57 +224,34 @@ int recover_inline_data(struct inode *inode, struct page *npage)
 		ri = F2FS_INODE(npage);
 
 	if (f2fs_has_inline_data(inode) &&
-<<<<<<< HEAD
 			ri && (ri->i_inline & F2FS_INLINE_DATA)) {
-=======
-			ri && ri->i_inline & F2FS_INLINE_DATA) {
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 process_inline:
 		ipage = get_node_page(sbi, inode->i_ino);
 		f2fs_bug_on(IS_ERR(ipage));
 
-<<<<<<< HEAD
 		f2fs_wait_on_page_writeback(ipage, NODE);
 
-=======
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 		src_addr = inline_data_addr(npage);
 		dst_addr = inline_data_addr(ipage);
 		memcpy(dst_addr, src_addr, MAX_INLINE_DATA);
 		update_inode(inode, ipage);
 		f2fs_put_page(ipage, 1);
-<<<<<<< HEAD
 		return true;
-=======
-		return -1;
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	}
 
 	if (f2fs_has_inline_data(inode)) {
 		ipage = get_node_page(sbi, inode->i_ino);
 		f2fs_bug_on(IS_ERR(ipage));
-<<<<<<< HEAD
 		f2fs_wait_on_page_writeback(ipage, NODE);
-=======
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 		zero_user_segment(ipage, INLINE_DATA_OFFSET,
 				 INLINE_DATA_OFFSET + MAX_INLINE_DATA);
 		clear_inode_flag(F2FS_I(inode), FI_INLINE_DATA);
 		update_inode(inode, ipage);
 		f2fs_put_page(ipage, 1);
-<<<<<<< HEAD
 	} else if (ri && (ri->i_inline & F2FS_INLINE_DATA)) {
 		truncate_blocks(inode, 0, false);
 		set_inode_flag(F2FS_I(inode), FI_INLINE_DATA);
 		goto process_inline;
 	}
 	return false;
-=======
-	} else if (ri && ri->i_inline & F2FS_INLINE_DATA) {
-		truncate_blocks(inode, 0);
-		set_inode_flag(F2FS_I(inode), FI_INLINE_DATA);
-		goto process_inline;
-	}
-	return 0;
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 }

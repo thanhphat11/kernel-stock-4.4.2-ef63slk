@@ -502,6 +502,42 @@ release_out:
 	return err;
 }
 
+static void truncate_node(struct dnode_of_data *dn)
+{
+	struct f2fs_sb_info *sbi = F2FS_SB(dn->inode->i_sb);
+	struct node_info ni;
+
+	get_node_info(sbi, dn->nid, &ni);
+	if (dn->inode->i_blocks == 0) {
+		f2fs_bug_on(ni.blk_addr != NULL_ADDR);
+		goto invalidate;
+	}
+	f2fs_bug_on(ni.blk_addr == NULL_ADDR);
+
+	/* Deallocate node address */
+	invalidate_blocks(sbi, ni.blk_addr);
+	dec_valid_node_count(sbi, dn->inode);
+	set_node_addr(sbi, &ni, NULL_ADDR, false);
+
+	if (dn->nid == dn->inode->i_ino) {
+		remove_orphan_inode(sbi, dn->nid);
+		dec_valid_inode_count(sbi);
+	} else {
+		sync_inode_page(dn);
+	}
+invalidate:
+	clear_node_page_dirty(dn->node_page);
+	F2FS_SET_SB_DIRT(sbi);
+
+	f2fs_put_page(dn->node_page, 1);
+
+	invalidate_mapping_pages(NODE_MAPPING(sbi),
+			dn->node_page->index, dn->node_page->index);
+
+	dn->node_page = NULL;
+	trace_f2fs_truncate_node(dn->inode, dn->nid, ni.blk_addr);
+}
+
 static int truncate_dnode(struct dnode_of_data *dn)
 {
 	struct f2fs_sb_info *sbi = F2FS_SB(dn->inode->i_sb);
@@ -521,7 +557,80 @@ static int truncate_dnode(struct dnode_of_data *dn)
 	dn->node_page = page;
 	dn->ofs_in_node = 0;
 	truncate_data_blocks(dn);
+	truncate_node(dn);
 	return 1;
+}
+
+static int truncate_nodes(struct dnode_of_data *dn, unsigned int nofs,
+						int ofs, int depth)
+{
+	struct f2fs_sb_info *sbi = F2FS_SB(dn->inode->i_sb);
+	struct dnode_of_data rdn = *dn;
+	struct page *page;
+	struct f2fs_node *rn;
+	nid_t child_nid;
+	unsigned int child_nofs;
+	int freed = 0;
+	int i, ret;
+
+	if (dn->nid == 0)
+		return NIDS_PER_BLOCK + 1;
+
+	trace_f2fs_truncate_nodes_enter(dn->inode, dn->nid, dn->data_blkaddr);
+
+	page = get_node_page(sbi, dn->nid);
+	if (IS_ERR(page)) {
+		trace_f2fs_truncate_nodes_exit(dn->inode, PTR_ERR(page));
+		return PTR_ERR(page);
+	}
+
+	rn = F2FS_NODE(page);
+	if (depth < 3) {
+		for (i = ofs; i < NIDS_PER_BLOCK; i++, freed++) {
+			child_nid = le32_to_cpu(rn->in.nid[i]);
+			if (child_nid == 0)
+				continue;
+			rdn.nid = child_nid;
+			ret = truncate_dnode(&rdn);
+			if (ret < 0)
+				goto out_err;
+			set_nid(page, i, 0, false);
+		}
+	} else {
+		child_nofs = nofs + ofs * (NIDS_PER_BLOCK + 1) + 1;
+		for (i = ofs; i < NIDS_PER_BLOCK; i++) {
+			child_nid = le32_to_cpu(rn->in.nid[i]);
+			if (child_nid == 0) {
+				child_nofs += NIDS_PER_BLOCK + 1;
+				continue;
+			}
+			rdn.nid = child_nid;
+			ret = truncate_nodes(&rdn, child_nofs, 0, depth - 1);
+			if (ret == (NIDS_PER_BLOCK + 1)) {
+				set_nid(page, i, 0, false);
+				child_nofs += ret;
+			} else if (ret < 0 && ret != -ENOENT) {
+				goto out_err;
+			}
+		}
+		freed = child_nofs;
+	}
+
+	if (!ofs) {
+		/* remove current indirect node */
+		dn->node_page = page;
+		truncate_node(dn);
+		freed++;
+	} else {
+		f2fs_put_page(page, 1);
+	}
+	trace_f2fs_truncate_nodes_exit(dn->inode, freed);
+	return freed;
+
+out_err:
+	f2fs_put_page(page, 1);
+	trace_f2fs_truncate_nodes_exit(dn->inode, ret);
+	return ret;
 }
 
 static int truncate_partial_nodes(struct dnode_of_data *dn,
@@ -566,6 +675,7 @@ static int truncate_partial_nodes(struct dnode_of_data *dn,
 	if (offset[idx + 1] == 0) {
 		dn->node_page = pages[idx];
 		dn->nid = nid[idx];
+		truncate_node(dn);
 	} else {
 		f2fs_put_page(pages[idx], 1);
 	}
@@ -641,6 +751,16 @@ skip_partial:
 		case NODE_DIR1_BLOCK:
 		case NODE_DIR2_BLOCK:
 			err = truncate_dnode(&dn);
+			break;
+
+		case NODE_IND1_BLOCK:
+		case NODE_IND2_BLOCK:
+			err = truncate_nodes(&dn, nofs, offset[1], 2);
+			break;
+
+		case NODE_DIND_BLOCK:
+			err = truncate_nodes(&dn, nofs, offset[1], 3);
+			cont = 0;
 			break;
 
 		default:
@@ -777,7 +897,8 @@ struct page *new_node_page(struct dnode_of_data *dn,
 	dn->node_page = page;
 	if (ipage)
 		update_inode(dn->inode, ipage);
-
+	else
+		sync_inode_page(dn);
 	if (ofs == 0)
 		inc_valid_inode_count(sbi);
 
@@ -919,6 +1040,21 @@ page_hit:
 		return ERR_PTR(-EIO);
 	}
 	return page;
+}
+
+void sync_inode_page(struct dnode_of_data *dn)
+{
+	if (IS_INODE(dn->node_page) || dn->inode_page == dn->node_page) {
+		update_inode(dn->inode, dn->node_page);
+	} else if (dn->inode_page) {
+		if (!dn->inode_page_locked)
+			lock_page(dn->inode_page);
+		update_inode(dn->inode, dn->inode_page);
+		if (!dn->inode_page_locked)
+			unlock_page(dn->inode_page);
+	} else {
+		update_inode_page(dn->inode);
+	}
 }
 
 int sync_node_pages(struct f2fs_sb_info *sbi, nid_t ino,
@@ -1473,6 +1609,7 @@ recover_xnid:
 	refresh_sit_entry(sbi, NEW_ADDR, blkaddr);
 	set_node_addr(sbi, &ni, blkaddr, false);
 
+	update_inode_page(inode);
 }
 
 int recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)

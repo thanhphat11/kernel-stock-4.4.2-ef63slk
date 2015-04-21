@@ -2620,7 +2620,6 @@ config SKY_DS_ANDROID_SECURITY_PATCH_CVE_2014_4943
 	  Since this can never have worked so nobody could possibly have depended 
 	  on that functionality, just remove the broken code and return -EINVAL.	  
 
-<<<<<<< HEAD
 endmenu
 #endif /* FEATURE_SKY_DS_KERNEL_CONFIG */
 
@@ -2637,7 +2636,7 @@ source "security/Kconfig"
 source "crypto/Kconfig"
 
 source "lib/Kconfig"
-=======
+
 config LGU_DS_SECURITY_PATCH_CVE_2014_4943
 	bool "net/l2tp: don't fall back on UDP [get|set]sockopt"
 	depends on LGU_DS_K_CONFIG
@@ -2646,6 +2645,4 @@ config LGU_DS_SECURITY_PATCH_CVE_2014_4943
 	  The l2tp [get|set]sockopt() code has fallen back to the UDP functions
 	  for socket option levels != SOL_PPPOL2TP since day one, but that has
 	  never actually worked, since the l2tp socket isn't an inet socket.
-	  https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=3cf521f7dc87c031617fd47e4b7aa2593c2f3daf
-#CONFIG_LGU_DS_K_CONFIG
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
+

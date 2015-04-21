@@ -12,10 +12,7 @@
 #include <linux/f2fs_fs.h>
 #include <linux/buffer_head.h>
 #include <linux/mpage.h>
-<<<<<<< HEAD
 #include <linux/aio.h>
-=======
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 #include <linux/writeback.h>
 #include <linux/backing-dev.h>
 #include <linux/blkdev.h>
@@ -29,7 +26,6 @@
 
 static void f2fs_read_end_io(struct bio *bio, int err)
 {
-<<<<<<< HEAD
 	struct bio_vec *bvec;
 	int i;
 
@@ -44,32 +40,11 @@ static void f2fs_read_end_io(struct bio *bio, int err)
 		}
 		unlock_page(page);
 	}
-=======
-	const int uptodate = test_bit(BIO_UPTODATE, &bio->bi_flags);
-	struct bio_vec *bvec = bio->bi_io_vec + bio->bi_vcnt - 1;
-
-	do {
-		struct page *page = bvec->bv_page;
-
-		if (--bvec >= bio->bi_io_vec)
-			prefetchw(&bvec->bv_page->flags);
-
-		if (unlikely(!uptodate)) {
-			ClearPageUptodate(page);
-			SetPageError(page);
-		} else {
-			SetPageUptodate(page);
-		}
-		unlock_page(page);
-	} while (bvec >= bio->bi_io_vec);
-
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	bio_put(bio);
 }
 
 static void f2fs_write_end_io(struct bio *bio, int err)
 {
-<<<<<<< HEAD
 	struct f2fs_sb_info *sbi = bio->bi_private;
 	struct bio_vec *bvec;
 	int i;
@@ -90,30 +65,6 @@ static void f2fs_write_end_io(struct bio *bio, int err)
 		complete(sbi->wait_io);
 		sbi->wait_io = NULL;
 	}
-=======
-	const int uptodate = test_bit(BIO_UPTODATE, &bio->bi_flags);
-	struct bio_vec *bvec = bio->bi_io_vec + bio->bi_vcnt - 1;
-	struct f2fs_sb_info *sbi = F2FS_SB(bvec->bv_page->mapping->host->i_sb);
-
-	do {
-		struct page *page = bvec->bv_page;
-
-		if (--bvec >= bio->bi_io_vec)
-			prefetchw(&bvec->bv_page->flags);
-
-		if (unlikely(!uptodate)) {
-			SetPageError(page);
-			set_bit(AS_EIO, &page->mapping->flags);
-			set_ckpt_flags(sbi->ckpt, CP_ERROR_FLAG);
-			sbi->sb->s_flags |= MS_RDONLY;
-		}
-		end_page_writeback(page);
-		dec_page_count(sbi, F2FS_WRITEBACK);
-	} while (bvec >= bio->bi_io_vec);
-
-	if (bio->bi_private)
-		complete(bio->bi_private);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 
 	if (!get_pages(sbi, F2FS_WRITEBACK) &&
 			!list_empty(&sbi->cp_wait.task_list))
@@ -136,10 +87,7 @@ static struct bio *__bio_alloc(struct f2fs_sb_info *sbi, block_t blk_addr,
 	bio->bi_bdev = sbi->sb->s_bdev;
 	bio->bi_sector = SECTOR_FROM_BLOCK(sbi, blk_addr);
 	bio->bi_end_io = is_read ? f2fs_read_end_io : f2fs_write_end_io;
-<<<<<<< HEAD
 	bio->bi_private = sbi;
-=======
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 
 	return bio;
 }
@@ -167,11 +115,7 @@ static void __submit_merged_bio(struct f2fs_bio_info *io)
 		 */
 		if (fio->type == META_FLUSH) {
 			DECLARE_COMPLETION_ONSTACK(wait);
-<<<<<<< HEAD
 			io->sbi->wait_io = &wait;
-=======
-			io->bio->bi_private = &wait;
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 			submit_bio(rw, io->bio);
 			wait_for_completion(&wait);
 		} else {
@@ -190,16 +134,11 @@ void f2fs_submit_merged_bio(struct f2fs_sb_info *sbi,
 
 	io = is_read_io(rw) ? &sbi->read_io : &sbi->write_io[btype];
 
-<<<<<<< HEAD
 	down_write(&io->io_rwsem);
-=======
-	mutex_lock(&io->io_mutex);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 
 	/* change META to META_FLUSH in the checkpoint procedure */
 	if (type >= META_FLUSH) {
 		io->fio.type = META_FLUSH;
-<<<<<<< HEAD
 		if (test_opt(sbi, NOBARRIER))
 			io->fio.rw = WRITE_FLUSH | REQ_META | REQ_PRIO;
 		else
@@ -207,12 +146,6 @@ void f2fs_submit_merged_bio(struct f2fs_sb_info *sbi,
 	}
 	__submit_merged_bio(io);
 	up_write(&io->io_rwsem);
-=======
-		io->fio.rw = WRITE_FLUSH_FUA | REQ_META | REQ_PRIO;
-	}
-	__submit_merged_bio(io);
-	mutex_unlock(&io->io_mutex);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 }
 
 /*
@@ -250,11 +183,7 @@ void f2fs_submit_page_mbio(struct f2fs_sb_info *sbi, struct page *page,
 
 	verify_block_addr(sbi, blk_addr);
 
-<<<<<<< HEAD
 	down_write(&io->io_rwsem);
-=======
-	mutex_lock(&io->io_mutex);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 
 	if (!is_read)
 		inc_page_count(sbi, F2FS_WRITEBACK);
@@ -278,11 +207,7 @@ alloc_new:
 
 	io->last_block_in_bio = blk_addr;
 
-<<<<<<< HEAD
 	up_write(&io->io_rwsem);
-=======
-	mutex_unlock(&io->io_mutex);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	trace_f2fs_submit_page_mbio(page, fio->rw, fio->type, blk_addr);
 }
 
@@ -323,10 +248,6 @@ int reserve_new_block(struct dnode_of_data *dn)
 	__set_data_blkaddr(dn, NEW_ADDR);
 	dn->data_blkaddr = NEW_ADDR;
 	mark_inode_dirty(dn->inode);
-<<<<<<< HEAD
-=======
-	sync_inode_page(dn);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	return 0;
 }
 
@@ -468,10 +389,6 @@ void update_extent_cache(block_t blk_addr, struct dnode_of_data *dn)
 end_update:
 	write_unlock(&fi->ext.ext_lock);
 	if (need_update)
-<<<<<<< HEAD
-=======
-		sync_inode_page(dn);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	return;
 }
 
@@ -501,11 +418,7 @@ struct page *find_data_page(struct inode *inode, pgoff_t index, bool sync)
 	if (unlikely(dn.data_blkaddr == NEW_ADDR))
 		return ERR_PTR(-EINVAL);
 
-<<<<<<< HEAD
 	page = grab_cache_page(mapping, index);
-=======
-	page = grab_cache_page_write_begin(mapping, index, AOP_FLAG_NOFS);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	if (!page)
 		return ERR_PTR(-ENOMEM);
 
@@ -543,11 +456,7 @@ struct page *get_lock_data_page(struct inode *inode, pgoff_t index)
 	int err;
 
 repeat:
-<<<<<<< HEAD
 	page = grab_cache_page(mapping, index);
-=======
-	page = grab_cache_page_write_begin(mapping, index, AOP_FLAG_NOFS);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	if (!page)
 		return ERR_PTR(-ENOMEM);
 
@@ -700,13 +609,8 @@ static int __allocate_data_block(struct dnode_of_data *dn)
  *     b. do not use extent cache for better performance
  *     c. give the block addresses to blockdev
  */
-<<<<<<< HEAD
 static int __get_data_block(struct inode *inode, sector_t iblock,
 			struct buffer_head *bh_result, int create, bool fiemap)
-=======
-static int get_data_block(struct inode *inode, sector_t iblock,
-			struct buffer_head *bh_result, int create)
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 {
 	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
 	unsigned int blkbits = inode->i_sb->s_blocksize_bits;
@@ -723,15 +627,10 @@ static int get_data_block(struct inode *inode, sector_t iblock,
 	if (check_extent_cache(inode, pgofs, bh_result))
 		goto out;
 
-<<<<<<< HEAD
 	if (create) {
 		f2fs_balance_fs(sbi);
 		f2fs_lock_op(sbi);
 	}
-=======
-	if (create)
-		f2fs_lock_op(sbi);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 
 	/* When reading holes, we need its node page */
 	set_new_dnode(&dn, inode, NULL, NULL, 0);
@@ -741,11 +640,7 @@ static int get_data_block(struct inode *inode, sector_t iblock,
 			err = 0;
 		goto unlock_out;
 	}
-<<<<<<< HEAD
 	if (dn.data_blkaddr == NEW_ADDR && !fiemap)
-=======
-	if (dn.data_blkaddr == NEW_ADDR)
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 		goto put_out;
 
 	if (dn.data_blkaddr != NULL_ADDR) {
@@ -760,12 +655,7 @@ static int get_data_block(struct inode *inode, sector_t iblock,
 		goto put_out;
 	}
 
-<<<<<<< HEAD
 	end_offset = ADDRS_PER_PAGE(dn.node_page, F2FS_I(inode));
-=======
-	end_offset = IS_INODE(dn.node_page) ?
-			ADDRS_PER_INODE(F2FS_I(inode)) : ADDRS_PER_BLOCK;
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	bh_result->b_size = (((size_t)1) << blkbits);
 	dn.ofs_in_node++;
 	pgofs++;
@@ -773,10 +663,6 @@ static int get_data_block(struct inode *inode, sector_t iblock,
 get_next:
 	if (dn.ofs_in_node >= end_offset) {
 		if (allocated)
-<<<<<<< HEAD
-=======
-			sync_inode_page(&dn);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 		allocated = false;
 		f2fs_put_dnode(&dn);
 
@@ -787,18 +673,10 @@ get_next:
 				err = 0;
 			goto unlock_out;
 		}
-<<<<<<< HEAD
 		if (dn.data_blkaddr == NEW_ADDR && !fiemap)
 			goto put_out;
 
 		end_offset = ADDRS_PER_PAGE(dn.node_page, F2FS_I(inode));
-=======
-		if (dn.data_blkaddr == NEW_ADDR)
-			goto put_out;
-
-		end_offset = IS_INODE(dn.node_page) ?
-			ADDRS_PER_INODE(F2FS_I(inode)) : ADDRS_PER_BLOCK;
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	}
 
 	if (maxblocks > (bh_result->b_size >> blkbits)) {
@@ -810,11 +688,7 @@ get_next:
 			allocated = true;
 			blkaddr = dn.data_blkaddr;
 		}
-<<<<<<< HEAD
 		/* Give more consecutive addresses for the readahead */
-=======
-		/* Give more consecutive addresses for the read ahead */
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 		if (blkaddr == (bh_result->b_blocknr + ofs)) {
 			ofs++;
 			dn.ofs_in_node++;
@@ -825,10 +699,6 @@ get_next:
 	}
 sync_out:
 	if (allocated)
-<<<<<<< HEAD
-=======
-		sync_inode_page(&dn);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 put_out:
 	f2fs_put_dnode(&dn);
 unlock_out:
@@ -839,7 +709,6 @@ out:
 	return err;
 }
 
-<<<<<<< HEAD
 static int get_data_block(struct inode *inode, sector_t iblock,
 			struct buffer_head *bh_result, int create)
 {
@@ -859,20 +728,14 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
 				start, len, get_data_block_fiemap);
 }
 
-=======
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 static int f2fs_read_data_page(struct file *file, struct page *page)
 {
 	struct inode *inode = page->mapping->host;
 	int ret;
 
-<<<<<<< HEAD
 	trace_f2fs_readpage(page, DATA);
 
 	/* If the file has inline data, try to read it directly */
-=======
-	/* If the file has inline data, try to read it directlly */
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	if (f2fs_has_inline_data(inode))
 		ret = f2fs_read_inline_data(inode, page);
 	else
@@ -922,17 +785,11 @@ int do_write_data_page(struct page *page, struct f2fs_io_info *fio)
 			!is_cold_data(page) &&
 			need_inplace_update(inode))) {
 		rewrite_data_page(page, old_blkaddr, fio);
-<<<<<<< HEAD
 		set_inode_flag(F2FS_I(inode), FI_UPDATE_WRITE);
 	} else {
 		write_data_page(page, &dn, &new_blkaddr, fio);
 		update_extent_cache(new_blkaddr, &dn);
 		set_inode_flag(F2FS_I(inode), FI_APPEND_WRITE);
-=======
-	} else {
-		write_data_page(page, &dn, &new_blkaddr, fio);
-		update_extent_cache(new_blkaddr, &dn);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	}
 out_writepage:
 	f2fs_put_dnode(&dn);
@@ -955,11 +812,8 @@ static int f2fs_write_data_page(struct page *page,
 		.rw = (wbc->sync_mode == WB_SYNC_ALL) ? WRITE_SYNC : WRITE,
 	};
 
-<<<<<<< HEAD
 	trace_f2fs_writepage(page, DATA);
 
-=======
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	if (page->index < end_index)
 		goto write;
 
@@ -968,7 +822,6 @@ static int f2fs_write_data_page(struct page *page,
 	 * this page does not have to be written to disk.
 	 */
 	offset = i_size & (PAGE_CACHE_SIZE - 1);
-<<<<<<< HEAD
 	if ((page->index >= end_index + 1) || !offset)
 		goto out;
 
@@ -1022,67 +875,6 @@ redirty_out:
 	return AOP_WRITEPAGE_ACTIVATE;
 }
 
-=======
-	if ((page->index >= end_index + 1) || !offset) {
-		if (S_ISDIR(inode->i_mode)) {
-			dec_page_count(sbi, F2FS_DIRTY_DENTS);
-			inode_dec_dirty_dents(inode);
-		}
-		goto out;
-	}
-
-	zero_user_segment(page, offset, PAGE_CACHE_SIZE);
-write:
-	if (unlikely(sbi->por_doing)) {
-		err = AOP_WRITEPAGE_ACTIVATE;
-		goto redirty_out;
-	}
-
-	/* Dentry blocks are controlled by checkpoint */
-	if (S_ISDIR(inode->i_mode)) {
-		dec_page_count(sbi, F2FS_DIRTY_DENTS);
-		inode_dec_dirty_dents(inode);
-		err = do_write_data_page(page, &fio);
-	} else {
-		f2fs_lock_op(sbi);
-
-		if (f2fs_has_inline_data(inode) || f2fs_may_inline(inode)) {
-			err = f2fs_write_inline_data(inode, page, offset);
-			f2fs_unlock_op(sbi);
-			goto out;
-		} else {
-			err = do_write_data_page(page, &fio);
-		}
-
-		f2fs_unlock_op(sbi);
-		need_balance_fs = true;
-	}
-	if (err == -ENOENT)
-		goto out;
-	else if (err)
-		goto redirty_out;
-
-	if (wbc->for_reclaim) {
-		f2fs_submit_merged_bio(sbi, DATA, WRITE);
-		need_balance_fs = false;
-	}
-
-	clear_cold_data(page);
-out:
-	unlock_page(page);
-	if (need_balance_fs)
-		f2fs_balance_fs(sbi);
-	return 0;
-
-redirty_out:
-	wbc->pages_skipped++;
-	set_page_dirty(page);
-	return err;
-}
-
-#define MAX_DESIRED_PAGES_WP	4096
-
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 static int __f2fs_writepage(struct page *page, struct writeback_control *wbc,
 			void *data)
 {
@@ -1099,32 +891,20 @@ static int f2fs_write_data_pages(struct address_space *mapping,
 	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
 	bool locked = false;
 	int ret;
-<<<<<<< HEAD
 	long diff;
 
 	trace_f2fs_writepages(mapping->host, wbc, DATA);
-=======
-	long excess_nrtw = 0, desired_nrtw;
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 
 	/* deal with chardevs and other special file */
 	if (!mapping->a_ops->writepage)
 		return 0;
 
-<<<<<<< HEAD
 	if (S_ISDIR(inode->i_mode) && wbc->sync_mode == WB_SYNC_NONE &&
 			get_dirty_dents(inode) < nr_pages_to_skip(sbi, DATA) &&
 			available_free_memory(sbi, DIRTY_DENTS))
 		goto skip_write;
 
 	diff = nr_pages_to_write(sbi, DATA, wbc);
-=======
-	if (wbc->nr_to_write < MAX_DESIRED_PAGES_WP) {
-		desired_nrtw = MAX_DESIRED_PAGES_WP;
-		excess_nrtw = desired_nrtw - wbc->nr_to_write;
-		wbc->nr_to_write = desired_nrtw;
-	}
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 
 	if (!S_ISDIR(inode->i_mode)) {
 		mutex_lock(&sbi->writepages);
@@ -1138,7 +918,6 @@ static int f2fs_write_data_pages(struct address_space *mapping,
 
 	remove_dirty_dir_inode(inode);
 
-<<<<<<< HEAD
 	wbc->nr_to_write = max((long)0, wbc->nr_to_write - diff);
 	return ret;
 
@@ -1155,10 +934,6 @@ static void f2fs_write_failed(struct address_space *mapping, loff_t to)
 		truncate_pagecache(inode, 0, inode->i_size);
 		truncate_blocks(inode, inode->i_size, true);
 	}
-=======
-	wbc->nr_to_write -= excess_nrtw;
-	return ret;
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 }
 
 static int f2fs_write_begin(struct file *file, struct address_space *mapping,
@@ -1172,7 +947,6 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
 	struct dnode_of_data dn;
 	int err = 0;
 
-<<<<<<< HEAD
 	trace_f2fs_write_begin(inode, pos, len, flags);
 
 	f2fs_balance_fs(sbi);
@@ -1190,17 +964,6 @@ repeat:
 	/* to avoid latency during memory pressure */
 	unlock_page(page);
 
-=======
-	f2fs_balance_fs(sbi);
-repeat:
-	err = f2fs_convert_inline_data(inode, pos + len);
-	if (err)
-		return err;
-
-	page = grab_cache_page_write_begin(mapping, index, flags);
-	if (!page)
-		return -ENOMEM;
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	*pagep = page;
 
 	if (f2fs_has_inline_data(inode) && (pos + len) <= MAX_INLINE_DATA)
@@ -1210,7 +973,6 @@ repeat:
 	set_new_dnode(&dn, inode, NULL, NULL, 0);
 	err = f2fs_reserve_block(&dn, index);
 	f2fs_unlock_op(sbi);
-<<<<<<< HEAD
 	if (err) {
 		f2fs_put_page(page, 0);
 		goto fail;
@@ -1224,14 +986,6 @@ inline_data:
 
 	f2fs_wait_on_page_writeback(page, DATA);
 
-=======
-
-	if (err) {
-		f2fs_put_page(page, 1);
-		return err;
-	}
-inline_data:
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	if ((len == PAGE_CACHE_SIZE) || PageUptodate(page))
 		return 0;
 
@@ -1247,7 +1001,6 @@ inline_data:
 	if (dn.data_blkaddr == NEW_ADDR) {
 		zero_user_segment(page, 0, PAGE_CACHE_SIZE);
 	} else {
-<<<<<<< HEAD
 		if (f2fs_has_inline_data(inode)) {
 			err = f2fs_read_inline_data(inode, page);
 			if (err) {
@@ -1266,19 +1019,6 @@ inline_data:
 			f2fs_put_page(page, 1);
 			err = -EIO;
 			goto fail;
-=======
-		if (f2fs_has_inline_data(inode))
-			err = f2fs_read_inline_data(inode, page);
-		else
-			err = f2fs_submit_page_bio(sbi, page, dn.data_blkaddr,
-							READ_SYNC);
-		if (err)
-			return err;
-		lock_page(page);
-		if (unlikely(!PageUptodate(page))) {
-			f2fs_put_page(page, 1);
-			return -EIO;
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 		}
 		if (unlikely(page->mapping != mapping)) {
 			f2fs_put_page(page, 1);
@@ -1289,12 +1029,9 @@ out:
 	SetPageUptodate(page);
 	clear_cold_data(page);
 	return 0;
-<<<<<<< HEAD
 fail:
 	f2fs_write_failed(mapping, pos + len);
 	return err;
-=======
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 }
 
 static int f2fs_write_end(struct file *file,
@@ -1304,21 +1041,13 @@ static int f2fs_write_end(struct file *file,
 {
 	struct inode *inode = page->mapping->host;
 
-<<<<<<< HEAD
 	trace_f2fs_write_end(inode, pos, len, copied);
 
-=======
-	SetPageUptodate(page);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	set_page_dirty(page);
 
 	if (pos + copied > i_size_read(inode)) {
 		i_size_write(inode, pos + copied);
 		mark_inode_dirty(inode);
-<<<<<<< HEAD
-=======
-		update_inode_page(inode);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	}
 
 	f2fs_put_page(page, 1);
@@ -1326,15 +1055,7 @@ static int f2fs_write_end(struct file *file,
 }
 
 static int check_direct_IO(struct inode *inode, int rw,
-<<<<<<< HEAD
 		const struct iovec *iov, loff_t offset, unsigned long nr_segs)
-=======
-#ifdef CONFIG_AIO_OPTIMIZATION
-		struct iov_iter *iter, loff_t offset)
-#else
-		const struct iovec *iov, loff_t offset, unsigned long nr_segs)
-#endif
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 {
 	unsigned blocksize_mask = inode->i_sb->s_blocksize - 1;
 	int i;
@@ -1345,30 +1066,14 @@ static int check_direct_IO(struct inode *inode, int rw,
 	if (offset & blocksize_mask)
 		return -EINVAL;
 
-<<<<<<< HEAD
 	for (i = 0; i < nr_segs; i++)
 		if (iov[i].iov_len & blocksize_mask)
 			return -EINVAL;
 
-=======
-#ifdef CONFIG_AIO_OPTIMIZATION
-	for (i = 0; i < iter->nr_segs; i++) {
-		const struct iovec *iov = iov_iter_iovec(iter);
-
-		if (iov[i].iov_len & blocksize_mask)
-			return -EINVAL;
-	}
-#else
-	for (i = 0; i < nr_segs; i++)
-		if (iov[i].iov_len & blocksize_mask)
-			return -EINVAL;
-#endif
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	return 0;
 }
 
 static ssize_t f2fs_direct_IO(int rw, struct kiocb *iocb,
-<<<<<<< HEAD
 				const struct iovec *iov, loff_t offset,
 				unsigned long nr_segs)
 {
@@ -1377,22 +1082,11 @@ static ssize_t f2fs_direct_IO(int rw, struct kiocb *iocb,
 	struct inode *inode = mapping->host;
 	size_t count = iov_length(iov, nr_segs);
 	int err;
-=======
-#ifdef CONFIG_AIO_OPTIMIZATION
-		struct iov_iter *iter, loff_t offset)
-#else
-		const struct iovec *iov, loff_t offset, unsigned long nr_segs)
-#endif
-{
-	struct file *file = iocb->ki_filp;
-	struct inode *inode = file->f_mapping->host;
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 
 	/* Let buffer I/O handle the inline data case. */
 	if (f2fs_has_inline_data(inode))
 		return 0;
 
-<<<<<<< HEAD
 	if (check_direct_IO(inode, rw, iov, offset, nr_segs))
 		return 0;
 
@@ -1410,38 +1104,13 @@ static ssize_t f2fs_direct_IO(int rw, struct kiocb *iocb,
 	trace_f2fs_direct_IO_exit(inode, offset, count, rw, err);
 
 	return err;
-=======
-#ifdef CONFIG_AIO_OPTIMIZATION
-	if (check_direct_IO(inode, rw, iter, offset))
-		return 0;
-#else
-	if (check_direct_IO(inode, rw, iov, offset, nr_segs))
-		return 0;
-#endif
-
-#ifdef CONFIG_AIO_OPTIMIZATION
-	return blockdev_direct_IO(rw, iocb, inode, iter, offset,
-					get_data_block);
-#else
-	return blockdev_direct_IO(rw, iocb, inode, iov, offset, nr_segs,
-							get_data_block);
-#endif
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 }
 
 static void f2fs_invalidate_data_page(struct page *page, unsigned long offset)
 {
 	struct inode *inode = page->mapping->host;
-<<<<<<< HEAD
 	if (PageDirty(page))
 		inode_dec_dirty_dents(inode);
-=======
-	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
-	if (S_ISDIR(inode->i_mode) && PageDirty(page)) {
-		dec_page_count(sbi, F2FS_DIRTY_DENTS);
-		inode_dec_dirty_dents(inode);
-	}
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	ClearPagePrivate(page);
 }
 
@@ -1471,14 +1140,11 @@ static int f2fs_set_data_page_dirty(struct page *page)
 
 static sector_t f2fs_bmap(struct address_space *mapping, sector_t block)
 {
-<<<<<<< HEAD
 	struct inode *inode = mapping->host;
 
 	if (f2fs_has_inline_data(inode))
 		return 0;
 
-=======
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	return generic_block_bmap(mapping, block, get_data_block);
 }
 

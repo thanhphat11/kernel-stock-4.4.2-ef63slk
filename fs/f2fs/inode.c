@@ -212,23 +212,6 @@ void update_inode(struct inode *inode, struct page *node_page)
 	clear_inode_flag(F2FS_I(inode), FI_DIRTY_INODE);
 }
 
-<<<<<<< HEAD
-=======
-int update_inode_page(struct inode *inode)
-{
-	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
-	struct page *node_page;
-
-	node_page = get_node_page(sbi, inode->i_ino);
-	if (IS_ERR(node_page))
-		return PTR_ERR(node_page);
-
-	update_inode(inode, node_page);
-	f2fs_put_page(node_page, 1);
-	return 0;
-}
-
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 int f2fs_write_inode(struct inode *inode, struct writeback_control *wbc)
 {
 	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
@@ -246,10 +229,6 @@ int f2fs_write_inode(struct inode *inode, struct writeback_control *wbc)
 	 * during the urgent cleaning time when runing out of free sections.
 	 */
 	f2fs_lock_op(sbi);
-<<<<<<< HEAD
-=======
-	ret = update_inode_page(inode);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	f2fs_unlock_op(sbi);
 
 	if (wbc)

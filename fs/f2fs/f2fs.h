@@ -21,26 +21,17 @@
 #include <linux/sched.h>
 
 #ifdef CONFIG_F2FS_CHECK_FS
-<<<<<<< HEAD
 #define f2fs_bug_on(sbi, condition)	BUG_ON(condition)
 #define f2fs_down_write(x, y)	down_write(x)
 #else
 #define f2fs_bug_on(condition)	WARN_ON(condition)
 #define f2fs_down_write(x, y)	down_write(x)
-=======
-#define f2fs_bug_on(condition)	BUG_ON(condition)
-#else
-#define f2fs_bug_on(condition)
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 #endif
 
 /*
  * For mount options
  */
-<<<<<<< HEAD
 #define F2FS_SUPER_MAGIC	0xF2F52010	/* F2FS Magic Number */
-=======
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 #define F2FS_MOUNT_BG_GC		0x00000001
 #define F2FS_MOUNT_DISABLE_ROLL_FORWARD	0x00000002
 #define F2FS_MOUNT_DISCARD		0x00000004
@@ -49,16 +40,9 @@
 #define F2FS_MOUNT_POSIX_ACL		0x00000020
 #define F2FS_MOUNT_DISABLE_EXT_IDENTIFY	0x00000040
 #define F2FS_MOUNT_INLINE_XATTR		0x00000080
-<<<<<<< HEAD
 #define F2FS_MOUNT_INLINE_DATA		0x00000100
 #define F2FS_MOUNT_FLUSH_MERGE		0x00000200
 #define F2FS_MOUNT_NOBARRIER		0x00000400
-=======
-#define F2FS_MOUNT_ANDROID_EMU		0x00001000
-#define F2FS_MOUNT_ERRORS_PANIC		0x00002000
-#define F2FS_MOUNT_ERRORS_RECOVER	0x00004000
-#define F2FS_MOUNT_INLINE_DATA		0x00000100
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 
 #define clear_opt(sbi, option)	(sbi->mount_opt.opt &= ~F2FS_MOUNT_##option)
 #define set_opt(sbi, option)	(sbi->mount_opt.opt |= F2FS_MOUNT_##option)
@@ -107,7 +91,6 @@ enum {
 	SIT_BITMAP
 };
 
-<<<<<<< HEAD
 /*
  * For CP/NAT/SIT/SSA readahead
  */
@@ -127,10 +110,6 @@ enum {
 };
 
 struct ino_entry {
-=======
-/* for the list of orphan inodes */
-struct orphan_inode_entry {
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	struct list_head list;	/* list head */
 	nid_t ino;		/* inode number */
 };
@@ -212,11 +191,8 @@ enum {
 
 #define F2FS_LINK_MAX		32000	/* maximum link count per file */
 
-<<<<<<< HEAD
 #define MAX_DIR_RA_PAGES	4	/* maximum ra pages of dir */
 
-=======
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 /* for in-memory extent cache entry */
 #define F2FS_MIN_EXTENT_LEN	16	/* minimum extent length */
 
@@ -232,42 +208,28 @@ struct extent_info {
  */
 #define FADVISE_COLD_BIT	0x01
 #define FADVISE_LOST_PINO_BIT	0x02
-<<<<<<< HEAD
 
 #define DEF_DIR_LEVEL		0
-=======
-#define FADVISE_ANDROID_EMU	0x10
-#define FADVISE_ANDROID_EMU_ROOT 0x20
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 
 struct f2fs_inode_info {
 	struct inode vfs_inode;		/* serve a vfs inode */
 	unsigned long i_flags;		/* keep an inode flags for ioctl */
 	unsigned char i_advise;		/* use to give file attribute hints */
-<<<<<<< HEAD
 	unsigned char i_dir_level;	/* use for dentry level for large dir */
-=======
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	unsigned int i_current_depth;	/* use only in directory structure */
 	unsigned int i_pino;		/* parent inode number */
 	umode_t i_acl_mode;		/* keep file acl mode temporarily */
 
 	/* Use below internally in f2fs*/
 	unsigned long flags;		/* use to pass per-file flags */
-<<<<<<< HEAD
 	struct rw_semaphore i_sem;	/* protect fi info */
-=======
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	atomic_t dirty_dents;		/* # of dirty dentry pages */
 	f2fs_hash_t chash;		/* hash value of given file name */
 	unsigned int clevel;		/* maximum level of given file name */
 	nid_t i_xattr_nid;		/* node id that contains xattrs */
 	unsigned long long xattr_ver;	/* cp version of xattr modification */
 	struct extent_info ext;		/* in-memory extent cache entry */
-<<<<<<< HEAD
 	struct dir_inode_entry *dirty_dir;	/* the pointer of dirty dir */
-=======
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 };
 
 static inline void get_extent_info(struct extent_info *ext,
@@ -293,13 +255,9 @@ static inline void set_raw_extent(struct extent_info *ext,
 struct f2fs_nm_info {
 	block_t nat_blkaddr;		/* base disk address of NAT */
 	nid_t max_nid;			/* maximum possible node ids */
-<<<<<<< HEAD
 	nid_t available_nids;		/* maximum available node ids */
 	nid_t next_scan_nid;		/* the next nid to be scanned */
 	unsigned int ram_thresh;	/* control the memory footprint */
-=======
-	nid_t next_scan_nid;		/* the next nid to be scanned */
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 
 	/* NAT cache management */
 	struct radix_tree_root nat_root;/* root of the nat entry cache */
@@ -307,16 +265,11 @@ struct f2fs_nm_info {
 	unsigned int nat_cnt;		/* the # of cached nat entries */
 	struct list_head nat_entries;	/* cached nat entry list (clean) */
 	struct list_head dirty_nat_entries; /* cached nat entry list (dirty) */
-<<<<<<< HEAD
 	struct list_head nat_entry_set;	/* nat entry set list */
 	unsigned int dirty_nat_cnt;	/* total num of nat entries in set */
 
 	/* free node ids management */
 	struct radix_tree_root free_nid_root;/* root of the free_nid cache */
-=======
-
-	/* free node ids management */
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	struct list_head free_nid_list;	/* a list for free nids */
 	spinlock_t free_nid_list_lock;	/* protect free nid list */
 	unsigned int fcnt;		/* the number of free node id */
@@ -379,7 +332,6 @@ enum {
 	NO_CHECK_TYPE
 };
 
-<<<<<<< HEAD
 struct flush_cmd {
 	struct flush_cmd *next;
 	struct completion wait;
@@ -395,20 +347,12 @@ struct flush_cmd_control {
 	struct flush_cmd *issue_tail;		/* list tail of issue list */
 };
 
-=======
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 struct f2fs_sm_info {
 	struct sit_info *sit_info;		/* whole segment information */
 	struct free_segmap_info *free_info;	/* free segment information */
 	struct dirty_seglist_info *dirty_info;	/* dirty segment information */
 	struct curseg_info *curseg_array;	/* active segment information */
 
-<<<<<<< HEAD
-=======
-	struct list_head wblist_head;	/* list of under-writeback pages */
-	spinlock_t wblist_lock;		/* lock for checkpoint */
-
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	block_t seg0_blkaddr;		/* block address of 0'th segment */
 	block_t main_blkaddr;		/* start block address of main area */
 	block_t ssa_blkaddr;		/* start block address of SSA area */
@@ -428,13 +372,10 @@ struct f2fs_sm_info {
 
 	unsigned int ipu_policy;	/* in-place-update policy */
 	unsigned int min_ipu_util;	/* in-place-update threshold */
-<<<<<<< HEAD
 
 	/* for flush command control */
 	struct flush_cmd_control *cmd_control_info;
 
-=======
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 };
 
 /*
@@ -455,11 +396,7 @@ enum count_type {
 };
 
 /*
-<<<<<<< HEAD
  * The below are the page types of bios used in submit_bio().
-=======
- * The below are the page types of bios used in submti_bio().
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
  * The available types are:
  * DATA			User data pages. It operates as async mode.
  * NODE			Node pages. It operates as async mode.
@@ -478,14 +415,6 @@ enum page_type {
 	META_FLUSH,
 };
 
-<<<<<<< HEAD
-=======
-/*
- * Android sdcard emulation flags
- */
-#define F2FS_ANDROID_EMU_NOCASE		0x00000001
-
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 struct f2fs_io_info {
 	enum page_type type;	/* contains DATA/NODE/META/META_FLUSH */
 	int rw;			/* contains R/RS/W/WS with REQ_META/REQ_PRIO */
@@ -497,11 +426,7 @@ struct f2fs_bio_info {
 	struct bio *bio;		/* bios to merge */
 	sector_t last_block_in_bio;	/* last block number */
 	struct f2fs_io_info fio;	/* store buffered io info. */
-<<<<<<< HEAD
 	struct rw_semaphore io_rwsem;	/* blocking op for bio */
-=======
-	struct mutex io_mutex;		/* mutex for bio */
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 };
 
 struct f2fs_sb_info {
@@ -521,17 +446,13 @@ struct f2fs_sb_info {
 	/* for bio operations */
 	struct f2fs_bio_info read_io;			/* for read bios */
 	struct f2fs_bio_info write_io[NR_PAGE_TYPE];	/* for write bios */
-<<<<<<< HEAD
 	struct completion *wait_io;		/* for completion bios */
-=======
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 
 	/* for checkpoint */
 	struct f2fs_checkpoint *ckpt;		/* raw checkpoint pointer */
 	struct inode *meta_inode;		/* cache meta blocks */
 	struct mutex cp_mutex;			/* checkpoint procedure lock */
 	struct rw_semaphore cp_rwsem;		/* blocking FS operations */
-<<<<<<< HEAD
 	struct rw_semaphore node_write;		/* locking node writes */
 	struct mutex writepages;		/* mutex for writepages() */
 	bool por_doing;				/* recovery is doing or not */
@@ -543,17 +464,6 @@ struct f2fs_sb_info {
 	struct list_head ino_list[MAX_INO_ENTRY];	/* inode list head */
 
 	/* for orphan inode, use 0'th array */
-=======
-	struct mutex node_write;		/* locking node writes */
-	struct mutex writepages;		/* mutex for writepages() */
-	bool por_doing;				/* recovery is doing or not */
-	bool on_build_free_nids;		/* build_free_nids is doing */
-	wait_queue_head_t cp_wait;
-
-	/* for orphan inode management */
-	struct list_head orphan_inode_list;	/* orphan inode list */
-	spinlock_t orphan_inode_lock;		/* for orphan inode list */
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	unsigned int n_orphans;			/* # of orphan inodes */
 	unsigned int max_orphans;		/* max orphan inodes */
 
@@ -561,11 +471,7 @@ struct f2fs_sb_info {
 	struct list_head dir_inode_list;	/* dir inode list */
 	spinlock_t dir_inode_lock;		/* for dir inode list lock */
 
-<<<<<<< HEAD
 	/* basic filesystem units */
-=======
-	/* basic file system units */
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	unsigned int log_sectors_per_block;	/* log2 sectors per block */
 	unsigned int log_blocksize;		/* log2 block size */
 	unsigned int blocksize;			/* block size */
@@ -581,10 +487,7 @@ struct f2fs_sb_info {
 	unsigned int total_valid_node_count;	/* valid node block count */
 	unsigned int total_valid_inode_count;	/* valid inode count */
 	int active_logs;			/* # of active logs */
-<<<<<<< HEAD
 	int dir_level;				/* directory level */
-=======
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 
 	block_t user_block_count;		/* # of user blocks */
 	block_t total_valid_block_count;	/* # of valid blocks */
@@ -622,15 +525,6 @@ struct f2fs_sb_info {
 	/* For sysfs suppport */
 	struct kobject s_kobj;
 	struct completion s_kobj_unregister;
-<<<<<<< HEAD
-=======
-
-	/* For Android sdcard emulation */
-	u32 android_emu_uid;
-	u32 android_emu_gid;
-	umode_t android_emu_mode;
-	int android_emu_flags;
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 };
 
 /*
@@ -748,11 +642,7 @@ static inline void f2fs_unlock_op(struct f2fs_sb_info *sbi)
 
 static inline void f2fs_lock_all(struct f2fs_sb_info *sbi)
 {
-<<<<<<< HEAD
 	f2fs_down_write(&sbi->cp_rwsem, &sbi->cp_mutex);
-=======
-	down_write(&sbi->cp_rwsem);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 }
 
 static inline void f2fs_unlock_all(struct f2fs_sb_info *sbi)
@@ -765,12 +655,8 @@ static inline void f2fs_unlock_all(struct f2fs_sb_info *sbi)
  */
 static inline int check_nid_range(struct f2fs_sb_info *sbi, nid_t nid)
 {
-<<<<<<< HEAD
 	if (unlikely(nid < F2FS_ROOT_INO(sbi)))
 		return -EINVAL;
-=======
-	WARN_ON((nid >= NM_I(sbi)->max_nid));
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	if (unlikely(nid >= NM_I(sbi)->max_nid))
 		return -EINVAL;
 	return 0;
@@ -789,19 +675,9 @@ static inline int F2FS_HAS_BLOCKS(struct inode *inode)
 		return inode->i_blocks > F2FS_DEFAULT_ALLOCATED_BLOCKS;
 }
 
-<<<<<<< HEAD
 static inline bool f2fs_has_xattr_block(unsigned int ofs)
 {
 	return ofs == XATTR_NODE_OFFSET;
-=======
-static inline int f2fs_handle_error(struct f2fs_sb_info *sbi)
-{
-	if (test_opt(sbi, ERRORS_PANIC))
-		BUG();
-	if (test_opt(sbi, ERRORS_RECOVER))
-		return 1;
-	return 0;
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 }
 
 static inline bool inc_valid_block_count(struct f2fs_sb_info *sbi,
@@ -828,25 +704,8 @@ static inline void dec_valid_block_count(struct f2fs_sb_info *sbi,
 						blkcnt_t count)
 {
 	spin_lock(&sbi->stat_lock);
-<<<<<<< HEAD
 	f2fs_bug_on(sbi->total_valid_block_count < (block_t) count);
 	f2fs_bug_on(inode->i_blocks < count);
-=======
-
-	if (sbi->total_valid_block_count < (block_t)count) {
-		pr_crit("F2FS-fs (%s): block accounting error: %u < %llu\n",
-			sbi->sb->s_id, sbi->total_valid_block_count, count);
-		f2fs_handle_error(sbi);
-		sbi->total_valid_block_count = count;
-	}
-	if (inode->i_blocks < count) {
-		pr_crit("F2FS-fs (%s): inode accounting error: %llu < %llu\n",
-			sbi->sb->s_id, inode->i_blocks, count);
-		f2fs_handle_error(sbi);
-		inode->i_blocks = count;
-	}
-
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	inode->i_blocks -= count;
 	sbi->total_valid_block_count -= (block_t)count;
 	spin_unlock(&sbi->stat_lock);
@@ -860,10 +719,7 @@ static inline void inc_page_count(struct f2fs_sb_info *sbi, int count_type)
 
 static inline void inode_inc_dirty_dents(struct inode *inode)
 {
-<<<<<<< HEAD
 	inc_page_count(F2FS_SB(inode->i_sb), F2FS_DIRTY_DENTS);
-=======
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	atomic_inc(&F2FS_I(inode)->dirty_dents);
 }
 
@@ -874,13 +730,10 @@ static inline void dec_page_count(struct f2fs_sb_info *sbi, int count_type)
 
 static inline void inode_dec_dirty_dents(struct inode *inode)
 {
-<<<<<<< HEAD
 	if (!S_ISDIR(inode->i_mode))
 		return;
 
 	dec_page_count(F2FS_SB(inode->i_sb), F2FS_DIRTY_DENTS);
-=======
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	atomic_dec(&F2FS_I(inode)->dirty_dents);
 }
 
@@ -889,14 +742,11 @@ static inline int get_pages(struct f2fs_sb_info *sbi, int count_type)
 	return atomic_read(&sbi->nr_pages[count_type]);
 }
 
-<<<<<<< HEAD
 static inline int get_dirty_dents(struct inode *inode)
 {
 	return atomic_read(&F2FS_I(inode)->dirty_dents);
 }
 
-=======
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 static inline int get_blocktype_secs(struct f2fs_sb_info *sbi, int block_type)
 {
 	unsigned int pages_per_sec = sbi->segs_per_sec *
@@ -907,15 +757,7 @@ static inline int get_blocktype_secs(struct f2fs_sb_info *sbi, int block_type)
 
 static inline block_t valid_user_blocks(struct f2fs_sb_info *sbi)
 {
-<<<<<<< HEAD
 	return sbi->total_valid_block_count;
-=======
-	block_t ret;
-	spin_lock(&sbi->stat_lock);
-	ret = sbi->total_valid_block_count;
-	spin_unlock(&sbi->stat_lock);
-	return ret;
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 }
 
 static inline unsigned long __bitmap_size(struct f2fs_sb_info *sbi, int flag)
@@ -934,7 +776,6 @@ static inline unsigned long __bitmap_size(struct f2fs_sb_info *sbi, int flag)
 static inline void *__bitmap_ptr(struct f2fs_sb_info *sbi, int flag)
 {
 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
-<<<<<<< HEAD
 	int offset;
 
 	if (le32_to_cpu(F2FS_RAW_SUPER(sbi)->cp_payload) > 0) {
@@ -947,11 +788,6 @@ static inline void *__bitmap_ptr(struct f2fs_sb_info *sbi, int flag)
 			le32_to_cpu(ckpt->sit_ver_bitmap_bytesize) : 0;
 		return &ckpt->sit_nat_version_bitmap + offset;
 	}
-=======
-	int offset = (flag == NAT_BITMAP) ?
-			le32_to_cpu(ckpt->sit_ver_bitmap_bytesize) : 0;
-	return &ckpt->sit_nat_version_bitmap + offset;
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 }
 
 static inline block_t __start_cp_addr(struct f2fs_sb_info *sbi)
@@ -964,11 +800,7 @@ static inline block_t __start_cp_addr(struct f2fs_sb_info *sbi)
 
 	/*
 	 * odd numbered checkpoint should at cp segment 0
-<<<<<<< HEAD
 	 * and even segment must be at cp segment 1
-=======
-	 * and even segent must be at cp segment 1
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	 */
 	if (!(ckpt_version & 1))
 		start_addr += sbi->blocks_per_seg;
@@ -1030,15 +862,7 @@ static inline void dec_valid_node_count(struct f2fs_sb_info *sbi,
 
 static inline unsigned int valid_node_count(struct f2fs_sb_info *sbi)
 {
-<<<<<<< HEAD
 	return sbi->total_valid_node_count;
-=======
-	unsigned int ret;
-	spin_lock(&sbi->stat_lock);
-	ret = sbi->total_valid_node_count;
-	spin_unlock(&sbi->stat_lock);
-	return ret;
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 }
 
 static inline void inc_valid_inode_count(struct f2fs_sb_info *sbi)
@@ -1059,15 +883,7 @@ static inline void dec_valid_inode_count(struct f2fs_sb_info *sbi)
 
 static inline unsigned int valid_inode_count(struct f2fs_sb_info *sbi)
 {
-<<<<<<< HEAD
 	return sbi->total_valid_inode_count;
-=======
-	unsigned int ret;
-	spin_lock(&sbi->stat_lock);
-	ret = sbi->total_valid_inode_count;
-	spin_unlock(&sbi->stat_lock);
-	return ret;
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 }
 
 static inline void f2fs_put_page(struct page *page, int unlock)
@@ -1093,15 +909,9 @@ static inline void f2fs_put_dnode(struct dnode_of_data *dn)
 }
 
 static inline struct kmem_cache *f2fs_kmem_cache_create(const char *name,
-<<<<<<< HEAD
 					size_t size)
 {
 	return kmem_cache_create(name, size, 0, SLAB_RECLAIM_ACCOUNT, NULL);
-=======
-					size_t size, void (*ctor)(void *))
-{
-	return kmem_cache_create(name, size, 0, SLAB_RECLAIM_ACCOUNT, ctor);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 }
 
 static inline void *f2fs_kmem_cache_alloc(struct kmem_cache *cachep,
@@ -1178,10 +988,7 @@ static inline int f2fs_clear_bit(unsigned int nr, char *addr)
 enum {
 	FI_NEW_INODE,		/* indicate newly allocated inode */
 	FI_DIRTY_INODE,		/* indicate inode is dirty or not */
-<<<<<<< HEAD
 	FI_DIRTY_DIR,		/* indicate directory has dirty pages */
-=======
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	FI_INC_LINK,		/* need to increment i_nlink */
 	FI_ACL_MODE,		/* indicate acl mode */
 	FI_NO_ALLOC,		/* should not allocate any blocks */
@@ -1190,22 +997,15 @@ enum {
 	FI_NO_EXTENT,		/* not to use the extent cache */
 	FI_INLINE_XATTR,	/* used for inline xattr */
 	FI_INLINE_DATA,		/* used for inline data*/
-<<<<<<< HEAD
 	FI_APPEND_WRITE,	/* inode has appended data */
 	FI_UPDATE_WRITE,	/* inode has in-place-update data */
 	FI_NEED_IPU,		/* used fo ipu for fdatasync */
-=======
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 };
 
 static inline void set_inode_flag(struct f2fs_inode_info *fi, int flag)
 {
-<<<<<<< HEAD
 	if (!test_bit(flag, &fi->flags))
 		set_bit(flag, &fi->flags);
-=======
-	set_bit(flag, &fi->flags);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 }
 
 static inline int is_inode_flag_set(struct f2fs_inode_info *fi, int flag)
@@ -1215,12 +1015,8 @@ static inline int is_inode_flag_set(struct f2fs_inode_info *fi, int flag)
 
 static inline void clear_inode_flag(struct f2fs_inode_info *fi, int flag)
 {
-<<<<<<< HEAD
 	if (test_bit(flag, &fi->flags))
 		clear_bit(flag, &fi->flags);
-=======
-	clear_bit(flag, &fi->flags);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 }
 
 static inline void set_acl_inode(struct f2fs_inode_info *fi, umode_t mode)
@@ -1238,17 +1034,6 @@ static inline int cond_clear_inode_flag(struct f2fs_inode_info *fi, int flag)
 	return 0;
 }
 
-<<<<<<< HEAD
-=======
-int f2fs_android_emu(struct f2fs_sb_info *, struct inode *, u32 *, u32 *,
-		umode_t *);
-
-#define IS_ANDROID_EMU(sbi, fi, pfi)					\
-	(test_opt((sbi), ANDROID_EMU) &&				\
-	 (((fi)->i_advise & FADVISE_ANDROID_EMU) ||			\
-	  ((pfi)->i_advise & FADVISE_ANDROID_EMU)))
-
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 static inline void get_inline_info(struct f2fs_inode_info *fi,
 					struct f2fs_inode *ri)
 {
@@ -1269,7 +1054,6 @@ static inline void set_raw_inline(struct f2fs_inode_info *fi,
 		ri->i_inline |= F2FS_INLINE_DATA;
 }
 
-<<<<<<< HEAD
 static inline int f2fs_has_inline_xattr(struct inode *inode)
 {
 	return is_inode_flag_set(F2FS_I(inode), FI_INLINE_XATTR);
@@ -1278,34 +1062,20 @@ static inline int f2fs_has_inline_xattr(struct inode *inode)
 static inline unsigned int addrs_per_inode(struct f2fs_inode_info *fi)
 {
 	if (f2fs_has_inline_xattr(&fi->vfs_inode))
-=======
-static inline unsigned int addrs_per_inode(struct f2fs_inode_info *fi)
-{
-	if (is_inode_flag_set(fi, FI_INLINE_XATTR))
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 		return DEF_ADDRS_PER_INODE - F2FS_INLINE_XATTR_ADDRS;
 	return DEF_ADDRS_PER_INODE;
 }
 
 static inline void *inline_xattr_addr(struct page *page)
 {
-<<<<<<< HEAD
 	struct f2fs_inode *ri = F2FS_INODE(page);
-=======
-	struct f2fs_inode *ri;
-	ri = (struct f2fs_inode *)page_address(page);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	return (void *)&(ri->i_addr[DEF_ADDRS_PER_INODE -
 					F2FS_INLINE_XATTR_ADDRS]);
 }
 
 static inline int inline_xattr_size(struct inode *inode)
 {
-<<<<<<< HEAD
 	if (f2fs_has_inline_xattr(inode))
-=======
-	if (is_inode_flag_set(F2FS_I(inode), FI_INLINE_XATTR))
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 		return F2FS_INLINE_XATTR_ADDRS << 2;
 	else
 		return 0;
@@ -1318,12 +1088,7 @@ static inline int f2fs_has_inline_data(struct inode *inode)
 
 static inline void *inline_data_addr(struct page *page)
 {
-<<<<<<< HEAD
 	struct f2fs_inode *ri = F2FS_INODE(page);
-=======
-	struct f2fs_inode *ri;
-	ri = (struct f2fs_inode *)page_address(page);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	return (void *)&(ri->i_addr[1]);
 }
 
@@ -1332,7 +1097,6 @@ static inline int f2fs_readonly(struct super_block *sb)
 	return sb->s_flags & MS_RDONLY;
 }
 
-<<<<<<< HEAD
 static inline bool f2fs_cp_error(struct f2fs_sb_info *sbi)
 {
 	return is_set_ckpt_flags(sbi->ckpt, CP_ERROR_FLAG);
@@ -1359,18 +1123,12 @@ static inline struct inode *file_inode(struct file *f)
 	(pgofs - ADDRS_PER_INODE(fi) + ADDRS_PER_BLOCK) /	\
 	ADDRS_PER_BLOCK * ADDRS_PER_BLOCK + ADDRS_PER_INODE(fi))
 
-=======
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 /*
  * file.c
  */
 int f2fs_sync_file(struct file *, loff_t, loff_t, int);
 void truncate_data_blocks(struct dnode_of_data *);
-<<<<<<< HEAD
 int truncate_blocks(struct inode *, u64, bool);
-=======
-int truncate_blocks(struct inode *, u64);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 void f2fs_truncate(struct inode *);
 int f2fs_getattr(struct vfsmount *, struct dentry *, struct kstat *);
 int f2fs_setattr(struct dentry *, struct iattr *);
@@ -1386,11 +1144,7 @@ void f2fs_set_inode_flags(struct inode *);
 struct inode *f2fs_iget(struct super_block *, unsigned long);
 int try_to_free_nats(struct f2fs_sb_info *, int);
 void update_inode(struct inode *, struct page *);
-<<<<<<< HEAD
 void update_inode_page(struct inode *);
-=======
-int update_inode_page(struct inode *);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 int f2fs_write_inode(struct inode *, struct writeback_control *);
 void f2fs_evict_inode(struct inode *);
 
@@ -1411,10 +1165,7 @@ void f2fs_set_link(struct inode *, struct f2fs_dir_entry *,
 int update_dent_inode(struct inode *, const struct qstr *);
 int __f2fs_add_link(struct inode *, const struct qstr *, struct inode *);
 void f2fs_delete_entry(struct f2fs_dir_entry *, struct page *, struct inode *);
-<<<<<<< HEAD
 int f2fs_do_tmpfile(struct inode *, struct inode *);
-=======
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 int f2fs_make_empty(struct inode *, struct inode *);
 bool f2fs_empty_dir(struct inode *);
 
@@ -1434,11 +1185,7 @@ void f2fs_msg(struct super_block *, const char *, const char *, ...);
 /*
  * hash.c
  */
-<<<<<<< HEAD
 f2fs_hash_t f2fs_dentry_hash(const struct qstr *);
-=======
-f2fs_hash_t f2fs_dentry_hash(const char *, size_t);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 
 /*
  * node.c
@@ -1446,25 +1193,17 @@ f2fs_hash_t f2fs_dentry_hash(const char *, size_t);
 struct dnode_of_data;
 struct node_info;
 
-<<<<<<< HEAD
 bool available_free_memory(struct f2fs_sb_info *, int);
 int is_checkpointed_node(struct f2fs_sb_info *, nid_t);
 bool fsync_mark_done(struct f2fs_sb_info *, nid_t);
 void fsync_mark_clear(struct f2fs_sb_info *, nid_t);
-=======
-int is_checkpointed_node(struct f2fs_sb_info *, nid_t);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 void get_node_info(struct f2fs_sb_info *, nid_t, struct node_info *);
 int get_dnode_of_data(struct dnode_of_data *, pgoff_t, int);
 int truncate_inode_blocks(struct inode *, pgoff_t);
 int truncate_xattr_node(struct inode *, struct page *);
 int wait_on_node_pages_writeback(struct f2fs_sb_info *, nid_t);
 void remove_inode_page(struct inode *);
-<<<<<<< HEAD
 struct page *new_inode_page(struct inode *);
-=======
-struct page *new_inode_page(struct inode *, const struct qstr *);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 struct page *new_node_page(struct dnode_of_data *, unsigned int, struct page *);
 void ra_node_page(struct f2fs_sb_info *, nid_t);
 struct page *get_node_page(struct f2fs_sb_info *, pgoff_t);
@@ -1474,13 +1213,8 @@ int sync_node_pages(struct f2fs_sb_info *, nid_t, struct writeback_control *);
 bool alloc_nid(struct f2fs_sb_info *, nid_t *);
 void alloc_nid_done(struct f2fs_sb_info *, nid_t);
 void alloc_nid_failed(struct f2fs_sb_info *, nid_t);
-<<<<<<< HEAD
 void recover_inline_xattr(struct inode *, struct page *);
 void recover_xattr_data(struct inode *, struct page *, block_t);
-=======
-void recover_node_page(struct f2fs_sb_info *, struct page *,
-		struct f2fs_summary *, struct node_info *, block_t);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 int recover_inode_page(struct f2fs_sb_info *, struct page *);
 int restore_node_summary(struct f2fs_sb_info *, unsigned int,
 				struct f2fs_summary_block *);
@@ -1495,7 +1229,6 @@ void destroy_node_manager_caches(void);
  */
 void f2fs_balance_fs(struct f2fs_sb_info *);
 void f2fs_balance_fs_bg(struct f2fs_sb_info *);
-<<<<<<< HEAD
 int f2fs_issue_flush(struct f2fs_sb_info *);
 int create_flush_cmd_control(struct f2fs_sb_info *);
 void destroy_flush_cmd_control(struct f2fs_sb_info *);
@@ -1503,10 +1236,6 @@ void invalidate_blocks(struct f2fs_sb_info *, block_t);
 void refresh_sit_entry(struct f2fs_sb_info *, block_t, block_t);
 void clear_prefree_segments(struct f2fs_sb_info *);
 void discard_next_dnode(struct f2fs_sb_info *, block_t);
-=======
-void invalidate_blocks(struct f2fs_sb_info *, block_t);
-void clear_prefree_segments(struct f2fs_sb_info *);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 int npages_for_summary_flush(struct f2fs_sb_info *);
 void allocate_new_segments(struct f2fs_sb_info *);
 struct page *get_sum_page(struct f2fs_sb_info *, unsigned int);
@@ -1518,11 +1247,6 @@ void write_data_page(struct page *, struct dnode_of_data *, block_t *,
 void rewrite_data_page(struct page *, block_t, struct f2fs_io_info *);
 void recover_data_page(struct f2fs_sb_info *, struct page *,
 				struct f2fs_summary *, block_t, block_t);
-<<<<<<< HEAD
-=======
-void rewrite_node_page(struct f2fs_sb_info *, struct page *,
-				struct f2fs_summary *, block_t, block_t);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 void allocate_data_block(struct f2fs_sb_info *, struct page *,
 		block_t, block_t *, struct f2fs_summary *, int);
 void f2fs_wait_on_page_writeback(struct page *, enum page_type);
@@ -1541,16 +1265,12 @@ void destroy_segment_manager_caches(void);
  */
 struct page *grab_meta_page(struct f2fs_sb_info *, pgoff_t);
 struct page *get_meta_page(struct f2fs_sb_info *, pgoff_t);
-<<<<<<< HEAD
 int ra_meta_pages(struct f2fs_sb_info *, int, int, int);
 long sync_meta_pages(struct f2fs_sb_info *, enum page_type, long);
 void add_dirty_inode(struct f2fs_sb_info *, nid_t, int type);
 void remove_dirty_inode(struct f2fs_sb_info *, nid_t, int type);
 void release_dirty_inode(struct f2fs_sb_info *);
 bool exist_written_data(struct f2fs_sb_info *, nid_t, int);
-=======
-long sync_meta_pages(struct f2fs_sb_info *, enum page_type, long);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 int acquire_orphan_inode(struct f2fs_sb_info *);
 void release_orphan_inode(struct f2fs_sb_info *);
 void add_orphan_inode(struct f2fs_sb_info *, nid_t);
@@ -1560,16 +1280,9 @@ int get_valid_checkpoint(struct f2fs_sb_info *);
 void set_dirty_dir_page(struct inode *, struct page *);
 void add_dirty_dir_inode(struct inode *);
 void remove_dirty_dir_inode(struct inode *);
-<<<<<<< HEAD
 void sync_dirty_dir_inodes(struct f2fs_sb_info *);
 void write_checkpoint(struct f2fs_sb_info *, bool);
 void init_ino_entry_info(struct f2fs_sb_info *);
-=======
-struct inode *check_dirty_dir_inode(struct f2fs_sb_info *, nid_t);
-void sync_dirty_dir_inodes(struct f2fs_sb_info *);
-void write_checkpoint(struct f2fs_sb_info *, bool);
-void init_orphan_info(struct f2fs_sb_info *);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 int __init create_checkpoint_caches(void);
 void destroy_checkpoint_caches(void);
 
@@ -1587,10 +1300,7 @@ struct page *find_data_page(struct inode *, pgoff_t, bool);
 struct page *get_lock_data_page(struct inode *, pgoff_t);
 struct page *get_new_data_page(struct inode *, struct page *, pgoff_t, bool);
 int do_write_data_page(struct page *, struct f2fs_io_info *);
-<<<<<<< HEAD
 int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *, u64, u64);
-=======
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 
 /*
  * gc.c
@@ -1616,10 +1326,6 @@ bool space_for_roll_forward(struct f2fs_sb_info *);
 struct f2fs_stat_info {
 	struct list_head stat_list;
 	struct f2fs_sb_info *sbi;
-<<<<<<< HEAD
-=======
-	struct mutex stat_lock;
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	int all_area_segs, sit_area_segs, nat_area_segs, ssa_area_segs;
 	int main_area_segs, main_area_sections, main_area_zones;
 	int hit_ext, total_ext;
@@ -1632,11 +1338,7 @@ struct f2fs_stat_info {
 	int util_free, util_valid, util_invalid;
 	int rsvd_segs, overp_segs;
 	int dirty_count, node_pages, meta_pages;
-<<<<<<< HEAD
 	int prefree_count, call_count, cp_count;
-=======
-	int prefree_count, call_count;
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 	int tot_segs, node_segs, data_segs, free_segs, free_secs;
 	int tot_blks, data_blks, node_blks;
 	int curseg[NR_CURSEG_TYPE];
@@ -1653,10 +1355,7 @@ static inline struct f2fs_stat_info *F2FS_STAT(struct f2fs_sb_info *sbi)
 	return (struct f2fs_stat_info *)sbi->stat_info;
 }
 
-<<<<<<< HEAD
 #define stat_inc_cp_count(si)		((si)->cp_count++)
-=======
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 #define stat_inc_call_count(si)		((si)->call_count++)
 #define stat_inc_bggc_count(sbi)	((sbi)->bg_gc++)
 #define stat_inc_dirty_dir(sbi)		((sbi)->n_dirty_dirs++)
@@ -1711,10 +1410,7 @@ void f2fs_destroy_stats(struct f2fs_sb_info *);
 void __init f2fs_create_root_stats(void);
 void f2fs_destroy_root_stats(void);
 #else
-<<<<<<< HEAD
 #define stat_inc_cp_count(si)
-=======
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 #define stat_inc_call_count(si)
 #define stat_inc_bggc_count(si)
 #define stat_inc_dirty_dir(sbi)
@@ -1751,14 +1447,8 @@ extern const struct inode_operations f2fs_special_inode_operations;
  */
 bool f2fs_may_inline(struct inode *);
 int f2fs_read_inline_data(struct inode *, struct page *);
-<<<<<<< HEAD
 int f2fs_convert_inline_data(struct inode *, pgoff_t, struct page *);
 int f2fs_write_inline_data(struct inode *, struct page *, unsigned int);
 void truncate_inline_data(struct inode *, u64);
 bool recover_inline_data(struct inode *, struct page *);
-=======
-int f2fs_convert_inline_data(struct inode *, pgoff_t);
-int f2fs_write_inline_data(struct inode *, struct page *, unsigned int);
-int recover_inline_data(struct inode *, struct page *);
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
 #endif
