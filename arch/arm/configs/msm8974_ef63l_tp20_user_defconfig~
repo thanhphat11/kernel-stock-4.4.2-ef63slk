@@ -636,8 +636,6 @@ CONFIG_QCOM_VOWIFI_11R=y
 # CONFIG_MSM_AVS_HW is not set
 # CONFIG_MSM_HW3D is not set
 CONFIG_AMSS_7X25_VERSION_2009=y
-<<<<<<< HEAD
-
 
 #F2FS
 CONFIG_F2FS_FS=y
@@ -646,5 +644,3 @@ CONFIG_F2FS_FS_XATTR=y
 # CONFIG_F2FS_FS_POSIX_ACL is not set
 CONFIG_F2FS_FS_SECURITY=y
 # CONFIG_F2FS_CHECK_FS is not set
-=======
->>>>>>> ef94e29... overlock cpu gpu , intelli full , I/O , lz4 , f2fs , Tweaks
